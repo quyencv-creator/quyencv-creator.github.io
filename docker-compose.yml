@@ -1,0 +1,12 @@
+services:
+  dev:
+    build: { context: ., target: dev }
+    ports: ["4321:4321"]
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./astro.config.mjs:/app/astro.config.mjs
+  web:
+    build: { context: ., target: serve }
+    ports: ["8080:80"]
+    profiles: [prod]

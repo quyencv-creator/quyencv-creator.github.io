@@ -1,0 +1,13 @@
+---
+import { formatDate, url } from '../utils';
+const { posts } = Astro.props;
+---
+<ul class="posts">
+  {posts.map((p) => (
+    <li>
+      <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
+      <a href={url(`/blog/${p.id}/`)}>{p.data.title}</a>
+      <p>{p.data.description}</p>
+    </li>
+  ))}
+</ul>
