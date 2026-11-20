@@ -2,10 +2,11 @@
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import { getPosts } from '../../utils';
+import { LANGUAGE_TAGS } from '../../consts';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  const tags = [...new Set([...LANGUAGE_TAGS.map((l) => l.tag), ...posts.flatMap((p) => p.data.tags)])];
   return tags.map((tag) => ({ params: { tag }, props: { posts: posts.filter((p) => p.data.tags.includes(tag)) } }));
 }
 const { tag } = Astro.params;
@@ -13,5 +14,5 @@ const { posts } = Astro.props;
 ---
 <Base title={`#${tag}`}>
   <h1>#{tag}</h1>
-  <PostList posts={posts} />
+  {posts.length > 0 ? <PostList posts={posts} /> : <p class="lead">Sắp có bài viết.</p>}
 </Base>

@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, LANGUAGE_TAGS } from '../consts';
 import { url } from '../utils';
 const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 ---
@@ -23,6 +23,7 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
       <a class="brand" href={url('/')}>{SITE_TITLE}</a>
       <nav>
         <a href={url('/')}>Bài viết</a>
+        {LANGUAGE_TAGS.map(({ tag, label }) => <a href={url(`/tags/${tag}/`)}>{label}</a>)}
         <a href={url('/tags/')}>Tag</a>
         <a href={url('/services/')}>Dịch vụ</a>
         <a href={url('/about/')}>Giới thiệu</a>
