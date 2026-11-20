@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import { services, BOOKING_URL } from '../../data/services';
+import { url } from '../../utils';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+const { service: s } = Astro.props;
+const booking = BOOKING_URL[s.slug];
+---
+<Base title={s.title} description={s.summary}>
+  <p class="meta"><a href={url('/services/')}>← Dịch vụ</a></p>
+  <h1>{s.title}</h1>
+  <p class="lead">{s.summary}</p>
+
+  <dl class="facts">
+    <div><dt>Giá</dt><dd>{s.price}</dd></div>
+    <div><dt>Thời lượng</dt><dd>{s.duration}</dd></div>
+    <div><dt>Hình thức</dt><dd>{s.format}</dd></div>
+  </dl>
+  <p><a class="button" href={booking} target="_blank" rel="noopener">Đặt lịch</a></p>
+
+  <h2>Dành cho ai</h2>
+  <ul>{s.audience.map((x) => <li>{x}</li>)}</ul>
+
+  <h2>Phạm vi hỗ trợ</h2>
+  <ul>{s.scope.map((x) => <li>{x}</li>)}</ul>
+  <h3>Không bao gồm</h3>
+  <ul>{s.outOfScope.map((x) => <li>{x}</li>)}</ul>
+
+  <h2>Câu hỏi thường gặp</h2>
+  <div class="faq">
+    {s.faq.map((f) => (
+      <details>
+        <summary>{f.q}</summary>
+        <p>{f.a}</p>
+      </details>
+    ))}
+  </div>
+
+  <p class="cta"><a class="button" href={booking} target="_blank" rel="noopener">Đặt lịch</a></p>
+</Base>

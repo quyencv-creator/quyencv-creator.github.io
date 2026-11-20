@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { services } from '../../data/services';
+import { url } from '../../utils';
+---
+<Base title="Dịch vụ" description="Các dịch vụ hỗ trợ online 1-1: IT support và mentor cho junior developer.">
+  <h1>Dịch vụ</h1>
+  <p class="lead">Hỗ trợ online 1-1 qua gọi video. Chọn dịch vụ để xem chi tiết và đặt lịch.</p>
+  <div class="cards">
+    {services.map((s) => (
+      <a class="card" href={url(`/services/${s.slug}/`)}>
+        <h2>{s.title}</h2>
+        <p>{s.summary}</p>
+        <p class="meta">{s.duration} · {s.price}</p>
+        <span class="more">Xem chi tiết →</span>
+      </a>
+    ))}
+  </div>
+</Base>
