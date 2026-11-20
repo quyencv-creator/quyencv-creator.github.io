@@ -10,7 +10,7 @@ docker build --target export --output dist .   # xuất file tĩnh ra ./dist
 
 ## Viết bài
 
-Tạo file `.md` trong `src/content/blog/` (xem mẫu `xin-chao.md`). Đặt `draft: true` để ẩn bài khi deploy.
+Tạo file `.md` trong `src/content/blog/`. Đặt `draft: true` để ẩn bài khi deploy.
 
 ## Đưa lên GitHub Pages
 
