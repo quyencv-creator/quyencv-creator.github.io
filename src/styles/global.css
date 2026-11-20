@@ -59,3 +59,11 @@ footer { margin-top: 4rem; font-size: .85rem; border-top: 1px solid var(--border
 .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.5rem 0 2rem; }
 .button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
 .social { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+
+/* pagination */
+.pagination { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2.5rem;
+  padding-top: 1rem; border-top: 1px solid var(--border); font-size: .95rem; }
+.pagination .pages { display: flex; gap: .35rem; }
+.pagination .pages > * { min-width: 2rem; text-align: center; padding: .1rem .4rem; border-radius: 6px; }
+.pagination .current { background: var(--accent); color: #fff; font-weight: 500; }
+.pagination .disabled { color: var(--muted); opacity: .5; }

@@ -1,0 +1,17 @@
+---
+import { url } from '../utils';
+const { page } = Astro.props;
+const href = (n: number) => url(n === 1 ? '/posts/' : `/posts/${n}/`);
+const pages = Array.from({ length: page.lastPage }, (_, i) => i + 1);
+---
+{page.lastPage > 1 && (
+  <nav class="pagination" aria-label="Phân trang">
+    {page.url.prev ? <a href={href(page.currentPage - 1)}>← Mới hơn</a> : <span class="disabled">← Mới hơn</span>}
+    <span class="pages">
+      {pages.map((n) => n === page.currentPage
+        ? <span class="current" aria-current="page">{n}</span>
+        : <a href={href(n)}>{n}</a>)}
+    </span>
+    {page.url.next ? <a href={href(page.currentPage + 1)}>Cũ hơn →</a> : <span class="disabled">Cũ hơn →</span>}
+  </nav>
+)}

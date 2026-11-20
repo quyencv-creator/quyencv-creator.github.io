@@ -1,11 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
-import { SITE_DESCRIPTION } from '../consts';
-import { getPosts } from '../utils';
-const posts = await getPosts();
+import { SITE_DESCRIPTION, POSTS_PER_PAGE } from '../consts';
+import { getPosts, url } from '../utils';
+const all = await getPosts();
+const posts = all.slice(0, POSTS_PER_PAGE);
 ---
 <Base>
   <p class="lead">{SITE_DESCRIPTION}</p>
   <PostList posts={posts} />
+  {all.length > posts.length && <p><a href={url('/posts/2/')}>Xem bài cũ hơn →</a></p>}
 </Base>

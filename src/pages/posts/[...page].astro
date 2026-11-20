@@ -1,0 +1,19 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getPosts } from '../../utils';
+import { POSTS_PER_PAGE } from '../../consts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+}) satisfies GetStaticPaths;
+const { page } = Astro.props;
+---
+<Base title={page.currentPage === 1 ? 'Bài viết' : `Bài viết · trang ${page.currentPage}`}>
+  <h1>Bài viết</h1>
+  <PostList posts={page.data} />
+  <Pagination page={page} />
+</Base>

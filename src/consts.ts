@@ -8,3 +8,5 @@ export const LANGUAGE_TAGS = [
   { tag: 'python', label: 'Python' },
   { tag: 'ruby', label: 'Ruby' },
 ] as const;
+
+export const POSTS_PER_PAGE = 10;
