@@ -12,4 +12,4 @@ export const LANGUAGE_TAGS = [
 export const POSTS_PER_PAGE = 10;
 
 // Google Analytics 4: điền Measurement ID dạng "G-XXXXXXXXXX". Để trống thì không nhúng script.
-export const GA_MEASUREMENT_ID = '';
+export const GA_MEASUREMENT_ID = 'G-73BKB046SZ';
