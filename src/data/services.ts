@@ -1,8 +1,8 @@
-// TODO: thay BOOKING_URL bằng link Google Calendar Appointment hoặc Cal.com thật,
+// TODO: điền BOOKING_URL bằng link Google Calendar Appointment hoặc Cal.com (để trống thì nút Đặt lịch bị ẩn),
 // ví dụ https://calendar.app.google/xxxx hoặc https://cal.com/<username>/<event>
 export const BOOKING_URL = {
-  'it-support': 'https://cal.com/your-username/it-support',
-  mentoring: 'https://cal.com/your-username/mentoring',
+  'it-support': '',
+  mentoring: '',
 } as const;
 
 export interface Service {
@@ -46,7 +46,7 @@ export const services: Service[] = [
     faq: [
       {
         q: 'Nếu không sửa được lỗi trong buổi thì sao?',
-        a: 'Nếu chưa xác định được nguyên nhân, mình sẽ ghi lại các bước đã thử và đề xuất hướng tiếp theo. [CHÍNH SÁCH HOÀN TIỀN / BUỔI BỔ SUNG]',
+        a: 'Nếu chưa xác định được nguyên nhân, mình sẽ ghi lại các bước đã thử và đề xuất hướng tiếp theo.',
       },
       {
         q: 'Có cần cài phần mềm điều khiển từ xa không?',
@@ -58,11 +58,11 @@ export const services: Service[] = [
       },
       {
         q: 'Thanh toán như thế nào?',
-        a: '[PHƯƠNG THỨC THANH TOÁN, ví dụ chuyển khoản trước buổi hẹn]',
+        a: '', // TODO: điền nội dung (để trống thì câu hỏi bị ẩn)
       },
       {
         q: 'Muốn đổi hoặc huỷ lịch thì sao?',
-        a: 'Bạn có thể đổi lịch qua link trong email xác nhận. [CHÍNH SÁCH HUỶ, ví dụ báo trước 24 giờ]',
+        a: 'Bạn có thể đổi lịch qua link trong email xác nhận.',
       },
     ],
   },
@@ -104,11 +104,11 @@ export const services: Service[] = [
       },
       {
         q: 'Có hỗ trợ giữa các buổi không?',
-        a: '[CHÍNH SÁCH HỖ TRỢ, ví dụ trả lời câu hỏi ngắn qua email/chat trong 7 ngày]',
+        a: '', // TODO: điền nội dung (để trống thì câu hỏi bị ẩn)
       },
       {
         q: 'Muốn đổi hoặc huỷ lịch thì sao?',
-        a: 'Bạn có thể đổi lịch qua link trong email xác nhận. [CHÍNH SÁCH HUỶ, ví dụ báo trước 24 giờ]',
+        a: 'Bạn có thể đổi lịch qua link trong email xác nhận.',
       },
     ],
   },
