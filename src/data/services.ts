@@ -40,7 +40,7 @@ export const services: Service[] = [
       'Bẻ khoá, cài phần mềm không bản quyền.',
       'Khôi phục dữ liệu từ ổ cứng hỏng vật lý.',
     ],
-    price: '[GIÁ] VNĐ / buổi',
+    price: 'Contact',
     duration: '60 phút',
     format: 'Google Meet hoặc Zoom, chia sẻ màn hình (có thể điều khiển từ xa nếu bạn đồng ý).',
     faq: [
@@ -86,7 +86,7 @@ export const services: Service[] = [
       'Làm hộ bài tập, đồ án hoặc bài test tuyển dụng.',
       'Cam kết có việc làm sau khi mentor.',
     ],
-    price: '[GIÁ] VNĐ / buổi · [GIÁ GÓI] VNĐ / gói 4 buổi',
+    price: 'Contact',
     duration: '60 phút',
     format: 'Google Meet, chia sẻ màn hình. Sau buổi có ghi chú tóm tắt và bài tập gợi ý.',
     faq: [
