@@ -67,3 +67,37 @@ footer { margin-top: 4rem; font-size: .85rem; border-top: 1px solid var(--border
 .pagination .pages > * { min-width: 2rem; text-align: center; padding: .1rem .4rem; border-radius: 6px; }
 .pagination .current { background: var(--accent); color: #fff; font-weight: 500; }
 .pagination .disabled { color: var(--muted); opacity: .5; }
+
+/* home */
+:root { --soft: color-mix(in srgb, var(--accent) 8%, transparent); }
+.hero { padding: 1.5rem 0 1rem; }
+.eyebrow { margin: 0; color: var(--accent); font-weight: 500; }
+.hero h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); margin: .4rem 0 .75rem; letter-spacing: -.01em; }
+.hl { color: var(--accent); }
+.hero .actions { margin: 1.25rem 0 0; }
+main > section + section { margin-top: 3rem; }
+.section-title { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 1rem; }
+.featured, .post-card, .topic { display: block; color: var(--fg); border: 1px solid var(--border); border-radius: 12px;
+  transition: border-color .15s, transform .15s; }
+.featured:hover, .post-card:hover, .topic:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-2px); }
+.featured { padding: 1.5rem; background: var(--soft); }
+.featured h3 { font-size: 1.35rem; margin: .3rem 0 .5rem; }
+.featured p, .post-card p { margin: 0; color: var(--muted); }
+.featured .more { display: inline-block; margin-top: .9rem; color: var(--accent); font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+.chips > * { font-size: .8rem; padding: .1rem .6rem; border: 1px solid var(--border); border-radius: 999px; }
+.featured .chips span { color: var(--muted); }
+.topics { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .75rem; }
+.topic { padding: 1rem 1.1rem; }
+.topic strong { display: block; font-size: 1.1rem; }
+.topic span { color: var(--muted); font-size: .85rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+.post-card { padding: 1.1rem 1.25rem; }
+.post-card time, .featured time { font-size: .8rem; }
+.post-card h3 { font-size: 1.05rem; margin: .25rem 0 .4rem; }
+.post-card p { font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.see-all { margin-top: 1.25rem; }
+.cta-box { padding: 1.5rem; border-radius: 12px; background: var(--soft); border: 1px solid var(--border); }
+.cta-box h2 { margin: 0 0 .4rem; }
+.cta-box p { margin: 0; color: var(--muted); }
+.cta-box .actions { margin: 1.1rem 0 0; }

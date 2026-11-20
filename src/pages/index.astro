@@ -1,13 +1,83 @@
 ---
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
-import { SITE_DESCRIPTION, POSTS_PER_PAGE } from '../consts';
-import { getPosts, url } from '../utils';
+import { SITE_DESCRIPTION, LANGUAGE_TAGS } from '../consts';
+import { getPosts, formatDate, url } from '../utils';
+
 const all = await getPosts();
-const posts = all.slice(0, POSTS_PER_PAGE);
+const [featured, ...rest] = all;
+const latest = rest.slice(0, 6);
+
+const count = (tag: string) => all.filter((p) => p.data.tags.includes(tag)).length;
+const otherTags = [...new Set(all.flatMap((p) => p.data.tags))]
+  .filter((t) => !LANGUAGE_TAGS.some((l) => l.tag === t))
+  .map((t) => ({ tag: t, n: count(t) }))
+  .sort((a, b) => b.n - a.n)
+  .slice(0, 8);
 ---
 <Base>
-  <p class="lead">{SITE_DESCRIPTION}</p>
-  <PostList posts={posts} />
-  {all.length > posts.length && <p><a href={url('/posts/2/')}>Xem bài cũ hơn →</a></p>}
+  <section class="hero">
+    <p class="eyebrow">Xin chào, mình là Quyền 👋</p>
+    <h1>Ghi chép thực chiến về <span class="hl">Golang</span>, <span class="hl">Ruby</span> và cách làm phần mềm tốt hơn.</h1>
+    <p class="lead">{SITE_DESCRIPTION}</p>
+    <div class="actions">
+      <a class="button" href={url('/posts/')}>Đọc bài viết</a>
+      <a class="button secondary" href={url('/services/')}>Mentoring 1-1</a>
+    </div>
+  </section>
+
+  {featured && (
+    <section>
+      <h2 class="section-title">Bài mới nhất</h2>
+      <a class="featured" href={url(`/blog/${featured.id}/`)}>
+        <time datetime={featured.data.pubDate.toISOString()}>{formatDate(featured.data.pubDate)}</time>
+        <h3>{featured.data.title}</h3>
+        <p>{featured.data.description}</p>
+        <span class="chips">{featured.data.tags.map((t) => <span>#{t}</span>)}</span>
+        <span class="more">Đọc tiếp →</span>
+      </a>
+    </section>
+  )}
+
+  <section>
+    <h2 class="section-title">Chủ đề</h2>
+    <div class="topics">
+      {LANGUAGE_TAGS.map(({ tag, label }) => (
+        <a class="topic" href={url(`/tags/${tag}/`)}>
+          <strong>{label}</strong>
+          <span>{count(tag) ? `${count(tag)} bài` : 'Sắp có'}</span>
+        </a>
+      ))}
+    </div>
+    {otherTags.length > 0 && (
+      <p class="chips more-tags">
+        {otherTags.map(({ tag }) => <a href={url(`/tags/${tag}/`)}>#{tag}</a>)}
+        <a href={url('/tags/')}>Tất cả tag →</a>
+      </p>
+    )}
+  </section>
+
+  {latest.length > 0 && (
+    <section>
+      <h2 class="section-title">Bài viết gần đây</h2>
+      <div class="grid">
+        {latest.map((p) => (
+          <a class="post-card" href={url(`/blog/${p.id}/`)}>
+            <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
+            <h3>{p.data.title}</h3>
+            <p>{p.data.description}</p>
+          </a>
+        ))}
+      </div>
+      <p class="see-all"><a href={url('/posts/')}>Xem tất cả bài viết →</a></p>
+    </section>
+  )}
+
+  <section class="cta-box">
+    <h2>Cần người cùng gỡ rối?</h2>
+    <p>IT support và mentor cho junior dev, trao đổi 1-1 qua gọi video.</p>
+    <div class="actions">
+      <a class="button" href={url('/services/')}>Xem dịch vụ</a>
+      <a class="button secondary" href={url('/contact/')}>Liên hệ</a>
+    </div>
+  </section>
 </Base>
