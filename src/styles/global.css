@@ -54,3 +54,8 @@ footer { margin-top: 4rem; font-size: .85rem; border-top: 1px solid var(--border
 .faq details p { margin: .5rem 0 0; color: var(--muted); }
 .cta { margin-top: 2rem; }
 @media (max-width: 30rem) { .facts div { grid-template-columns: 1fr; gap: 0; } }
+
+/* contact */
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.5rem 0 2rem; }
+.button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.social { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }

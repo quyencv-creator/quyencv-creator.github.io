@@ -26,6 +26,7 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
         {LANGUAGE_TAGS.map(({ tag, label }) => <a href={url(`/tags/${tag}/`)}>{label}</a>)}
         <a href={url('/tags/')}>Tag</a>
         <a href={url('/services/')}>Dịch vụ</a>
+        <a href={url('/contact/')}>Liên hệ</a>
         <a href={url('/about/')}>Giới thiệu</a>
         <a href={url('/rss.xml')}>RSS</a>
       </nav>
