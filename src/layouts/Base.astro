@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE_TITLE, SITE_DESCRIPTION, LANGUAGE_TAGS } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, LANGUAGE_TAGS, GA_MEASUREMENT_ID } from '../consts';
 import { url } from '../utils';
 const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 ---
@@ -17,6 +17,17 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
     <link rel="sitemap" href={url('/sitemap-index.xml')} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    {GA_MEASUREMENT_ID && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+        <script is:inline define:vars={{ id: GA_MEASUREMENT_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag("js", new Date());
+          gtag("config", id);
+        </script>
+      </>
+    )}
   </head>
   <body>
     <header>
