@@ -1,6 +1,6 @@
 ---
 title: "Context trong Go: vì sao hàm nào cũng phải nhận ctx?"
-description: Gọi một hàm từ main() mà không truyền ctx thì sao? Thử cho hàm đó lỗi, cho nó treo, trong khi main còn hàm thường và goroutine khác. Từ đó hiểu context đơn giản nhất có thể, và vì sao Ruby không cần thứ này.
+description: Gọi hàm mà không truyền ctx thì sao? Thử cho hàm treo, cho query PostgreSQL mồ côi giữ lock khi server tắt, cho job export bị dừng giữa chừng. Từ đó hiểu context đơn giản nhất có thể, và vì sao Ruby không cần thứ này.
 pubDate: 2026-11-21
 tags: [golang, concurrency, backend]
 ---
@@ -253,7 +253,229 @@ Ba quy tắc cần nhớ:
 
 Trong web server, bạn thậm chí không cần tạo ctx: `r.Context()` của `net/http` **tự huỷ khi client ngắt kết nối**. Người dùng đóng tab là mọi truy vấn DB đang chạy cho request đó dừng theo, miễn là bạn đã truyền ctx xuống tới tận chúng.
 
-## 5. Vì sao Ruby không cần, còn Go lúc nào cũng phải truyền?
+## 5. Context thật sự cứu bạn ở đâu?
+
+Ví dụ `time.After` ở trên dễ hiểu nhưng hơi "đồ chơi". Đây là những tình huống thật, nơi thiếu context thì hậu quả nằm ngoài chương trình Go của bạn.
+
+### 5.1. Database đang chạy query thì server tắt
+
+Một request mở transaction, `UPDATE` một dòng (giữ **row lock**), rồi chạy một câu query báo cáo nặng. Đúng lúc đó server Go bị tắt hoặc crash.
+
+Câu hỏi hay gặp: **connection có bị deadlock không?**
+
+Không phải deadlock theo nghĩa của database (hai transaction chờ nhau, PostgreSQL tự phát hiện và huỷ một bên). Mà là thứ khó chịu hơn: **query mồ côi**. Mình đã thử với PostgreSQL 16 và pgx v5:
+
+```go
+// KHÔNG có context
+tx, _ := db.Begin()
+tx.Exec("UPDATE accounts SET balance = balance - 10 WHERE id = 1") // giữ row lock
+tx.Exec("SELECT pg_sleep(60)")                                      // giả lập query nặng
+// ... server crash ở giây thứ 1
+```
+
+16 giây sau khi process Go đã chết, nhìn vào PostgreSQL:
+
+```
+SELECT state, wait_event, query FROM pg_stat_activity;
+
+ state  | wait_event | age_s |        query
+--------+------------+-------+---------------------
+ active | PgSleep    |    16 | SELECT pg_sleep(60)
+```
+
+Query **vẫn chạy**. PostgreSQL không biết client đã chết, vì nó chỉ phát hiện ra khi cố gửi kết quả về. Trong lúc đó transaction vẫn giữ row lock, và mọi request khác muốn sửa tài khoản số 1 đều **phải chờ**:
+
+```
+SET lock_timeout = '3s';
+UPDATE accounts SET balance = balance + 1 WHERE id = 1;
+ERROR:  canceling statement due to lock timeout
+```
+
+Với một query báo cáo chạy 10 phút, đó là 10 phút tài khoản bị khoá, 10 phút CPU của DB bị chiếm cho một kết quả không ai nhận.
+
+Giờ làm lại với context:
+
+```go
+tx, err := db.BeginTx(ctx, nil)
+tx.ExecContext(ctx, "UPDATE accounts SET balance = balance - 10 WHERE id = 1")
+_, err = tx.ExecContext(ctx, "SELECT pg_sleep(60)")
+// ctx bị huỷ sau 1 giây
+// → err = context canceled, query dừng sau 1s
+```
+
+Lần này `pg_stat_activity` **trống**, và `UPDATE` từ request khác chạy được ngay. Khi ctx bị huỷ, driver gửi một **CancelRequest** riêng tới PostgreSQL, bảo server dừng câu query đó; transaction bị rollback, lock được nhả.
+
+Có một chi tiết mình chỉ phát hiện khi chạy thử: **pgx gửi CancelRequest trong một goroutine nền**. Lần đầu mình cho chương trình `os.Exit` ngay sau `cancel()`, goroutine đó chưa kịp gửi, và query vẫn chạy trên server như không có gì. Bài học: **huỷ ctx xong phải cho chương trình thời gian dọn dẹp**, đừng thoát ngay. Đó chính là lý do cần graceful shutdown ở phần 5.2.
+
+Context không cứu được trường hợp process bị `kill -9` hay mất điện, vì lúc đó không còn code nào chạy để gửi tín hiệu. Lớp phòng thủ cuối là cấu hình phía database: `statement_timeout`, `idle_in_transaction_session_timeout`, và `client_connection_check_interval` (PostgreSQL 14+) để server tự kiểm tra client còn sống không.
+
+### 5.2. Export đang chạy thì server phải tắt
+
+Job export xuất 1 triệu đơn hàng ra CSV, chạy hàng trăm query theo từng batch. Giữa chừng, server được deploy bản mới và nhận `SIGTERM`.
+
+Không có context, có hai kết cục, đều tệ:
+
+- Process bị giết ngang: file CSV ghi dở, có thể đã bị gửi cho người dùng như thể là file hoàn chỉnh; query đang chạy thành query mồ côi như phần 5.1; job bị đánh dấu "đang chạy" mãi mãi.
+- Hoặc job không biết gì cả, tiếp tục bắn **hàng trăm query còn lại** trong lúc server đang cố tắt, kéo dài thời gian deploy cho tới khi bị kill cứng.
+
+Với context, job **tự biết** để dừng ở batch hiện tại, xoá file tạm, báo lỗi rõ ràng:
+
+```go
+func exportOrders(ctx context.Context, db *pgxpool.Pool, path string) (err error) {
+	tmp := path + ".tmp"
+	f, err := os.Create(tmp)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		f.Close()
+		if err != nil {
+			os.Remove(tmp) // không để lại file dở dang
+			return
+		}
+		err = os.Rename(tmp, path) // chỉ khi xong hết mới "công bố" file
+	}()
+
+	w := csv.NewWriter(f)
+	lastID, batch := 0, 0
+	for {
+		rows, err := db.Query(ctx, // ← ctx đi tới tận câu query
+			`SELECT id, total FROM orders WHERE id > $1 ORDER BY id LIMIT 1000`, lastID)
+		if err != nil {
+			return fmt.Errorf("batch %d: %w", batch, err)
+		}
+		n := 0
+		for rows.Next() {
+			var id, total int
+			if err := rows.Scan(&id, &total); err != nil {
+				rows.Close()
+				return err
+			}
+			w.Write([]string{strconv.Itoa(id), strconv.Itoa(total)})
+			lastID, n = id, n+1
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("batch %d: %w", batch, err)
+		}
+		if n == 0 {
+			w.Flush()
+			return w.Error()
+		}
+		batch++
+	}
+}
+```
+
+Không cần chỗ nào viết `if ctx.Err() != nil`: `db.Query(ctx, ...)` tự trả lỗi ngay khi ctx bị huỷ, kể cả khi đang chờ giữa chừng một query.
+
+Phần còn lại là `main` với **graceful shutdown**. Điểm quan trọng: job export chạy nền nên dùng **ctx của app**, không dùng `r.Context()` (cái đó bị huỷ ngay khi request trả 202 về).
+
+```go
+func main() {
+	// ctx tự huỷ khi nhận Ctrl+C hoặc SIGTERM (Kubernetes, systemd, docker stop)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	db, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	var jobs sync.WaitGroup
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /exports", func(w http.ResponseWriter, r *http.Request) {
+		jobs.Add(1)
+		go func() {
+			defer jobs.Done()
+			err := exportOrders(ctx, db, "/data/orders.csv") // ctx của app
+			log.Printf("export kết thúc: %v", err)
+		}()
+		w.WriteHeader(http.StatusAccepted)
+	})
+
+	srv := &http.Server{
+		Addr:        ":8080",
+		Handler:     mux,
+		BaseContext: func(net.Listener) context.Context { return ctx }, // request cũng bị huỷ khi tắt
+	}
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+
+	<-ctx.Done() // chờ tín hiệu tắt
+	log.Println("nhận tín hiệu tắt, dừng nhận request mới")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	srv.Shutdown(shutdownCtx) // chờ request đang chạy xong, tối đa 10 giây
+	jobs.Wait()               // chờ job export dọn dẹp xong
+	log.Println("đã dọn dẹp xong, thoát")
+}
+```
+
+Chạy thật: gọi `POST /exports`, 2 giây sau gửi `SIGTERM`:
+
+```
+POST /exports -> 202
+nhận tín hiệu tắt, dừng nhận request mới
+export: kết thúc sau 2.13s, err=batch 1: context canceled
+đã dọn dẹp xong, thoát
+```
+
+PostgreSQL không còn query nào của job, file tạm đã bị xoá, process thoát sạch. Job nên được đánh dấu "bị huỷ" trong DB để chạy lại sau, thay vì nằm "đang chạy" mãi.
+
+### 5.3. Người dùng đóng tab giữa lúc tìm kiếm nặng
+
+Trang tìm kiếm chạy một query full-text mất 8 giây. Người dùng sốt ruột, F5 năm lần. Không có context: server chạy **năm** query 8 giây, bốn cái kết quả không ai nhận. Với `r.Context()` truyền xuống `db.Query(ctx, ...)`, mỗi lần F5 là request cũ bị huỷ và query cũ dừng ngay. Lúc cao điểm, đây là khác biệt giữa DB chịu tải được và DB sập.
+
+### 5.4. Gọi API bên thứ ba
+
+`http.Get` mặc định **không có timeout**. Đối tác thanh toán treo là goroutine của bạn treo theo, mỗi request một cái, cho tới khi hết bộ nhớ.
+
+```go
+ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
+defer cancel()
+req, _ := http.NewRequestWithContext(ctx, http.MethodPost, paymentURL, body)
+resp, err := client.Do(req) // tối đa 3 giây, hoặc sớm hơn nếu client ngắt
+```
+
+Dùng `r.Context()` làm cha, nên timeout 3 giây **không vượt quá** thời gian còn lại của cả request. Request chỉ còn 1 giây thì lời gọi API cũng chỉ được 1 giây.
+
+### 5.5. Vòng lặp retry
+
+```go
+for attempt := 0; ; attempt++ {
+	err := callAPI(ctx)
+	if err == nil {
+		return nil
+	}
+	select {
+	case <-time.After(backoff(attempt)):
+	case <-ctx.Done():
+		return ctx.Err() // đang chờ để retry mà bị huỷ: dừng luôn
+	}
+}
+```
+
+Không có `ctx.Done()`, vòng retry vẫn kiên nhẫn chờ 1s, 2s, 4s, 8s… để gọi lại cho một request đã chết từ lâu.
+
+### 5.6. Consumer đọc từ hàng đợi
+
+Worker đọc message từ Kafka, RabbitMQ, SQS. Khi deploy, ta muốn: **xử lý nốt message đang làm, không nhận message mới**, rồi mới thoát. Vòng lặp `for` kiểm tra `ctx.Done()` trước mỗi lần lấy message mới, và message đang xử lý dở thì **không commit offset/ack**, để lần sau worker khác nhận lại. Thiếu context, worker bị giết giữa chừng sau khi đã ack nhưng chưa xử lý xong, và message đó biến mất.
+
+### 5.7. Chờ tài nguyên có hạn
+
+Lấy kết nối từ pool đang cạn, chờ semaphore, chờ lock phân tán trên Redis: tất cả đều là **chờ**, và chờ thì phải có giới hạn. `pool.Acquire(ctx)`, `sem.Acquire(ctx, 1)` trả lỗi khi ctx hết hạn, thay vì xếp hàng vô hạn và kéo cả hệ thống chậm theo.
+
+### Điểm chung
+
+Mọi tình huống trên có chung một hình dạng: **ai đó ở trên đã không cần kết quả nữa** (hết giờ, người dùng bỏ đi, server tắt, một nhánh khác lỗi), nhưng **ai đó ở dưới vẫn đang tốn tài nguyên** (query, lock, kết nối, file, CPU). Context là đường dây để tin "không cần nữa" đi từ trên xuống tới tận dưới cùng, và tới cả **tiến trình khác** như PostgreSQL.
+
+## 6. Vì sao Ruby không cần, còn Go lúc nào cũng phải truyền?
 
 Một controller Rails không có `ctx` nào cả:
 
@@ -294,4 +516,7 @@ Ruby giấu chuyện này đi cho tiện. Go bắt bạn viết ra cho rõ.
 - Lỗi trả về thì dùng `error`. Context dùng cho chiều ngược lại: báo **từ trên xuống** là hãy dừng, vì hết giờ hoặc vì không cần nữa.
 - Bọc goroutine + `time.After` chỉ ngừng *chờ*, không *dừng* được việc kia, và gây goroutine leak.
 - Context là sợi dây nối mọi việc của một yêu cầu: giật đầu dây là tất cả cùng dừng. Cha huỷ thì con huỷ, con huỷ không ảnh hưởng cha.
+- Tác dụng lớn nhất nằm **ngoài** chương trình Go: không có ctx, server tắt thì query vẫn chạy trên PostgreSQL và **giữ lock**; có ctx, driver gửi CancelRequest, query dừng, lock được nhả.
+- Huỷ ctx xong phải **cho thời gian dọn dẹp** (graceful shutdown): job export dừng ở batch hiện tại, xoá file tạm, rồi mới thoát. Job nền dùng ctx của app, không dùng `r.Context()`.
+- Ctx cũng là thứ giới hạn mọi kiểu **chờ**: API bên thứ ba, vòng retry, pool kết nối, semaphore, hàng đợi.
 - Ruby xử lý timeout ở từng thư viện và cắt ngang từ server. Go không cho giết goroutine từ bên ngoài, nên mọi hàm phải nhận ctx để **tự** dừng.
