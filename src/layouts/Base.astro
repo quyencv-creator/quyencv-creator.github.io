@@ -2,7 +2,15 @@
 import '../styles/global.css';
 import { SITE_TITLE, SITE_DESCRIPTION, LANGUAGE_TAGS, GA_MEASUREMENT_ID } from '../consts';
 import { url } from '../utils';
-const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+interface Props {
+  title?: string;
+  description?: string;
+  /** Ảnh chia sẻ: đường dẫn trong site ("/og/abc.png") hoặc URL đầy đủ. */
+  image?: string;
+  type?: 'website' | 'article';
+}
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, type = 'website' } = Astro.props;
+const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, Astro.site).href;
 ---
 <!doctype html>
 <html lang="vi">
@@ -17,6 +25,16 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
     <link rel="sitemap" href={url('/sitemap-index.xml')} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && <meta property="og:image:width" content="1200" />}
+    {imageUrl && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content={imageUrl ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     {GA_MEASUREMENT_ID && (
       <>
         <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
