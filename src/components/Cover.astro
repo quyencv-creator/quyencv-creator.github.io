@@ -1,0 +1,46 @@
+---
+import { SITE_TITLE } from '../consts';
+import { COVER_W, COVER_H, coverTheme, wrapTitle, titleFontSize } from '../cover';
+import { formatDate, url } from '../utils';
+
+interface Props {
+  title: string;
+  tags: string[];
+  pubDate: Date;
+  cover?: string;
+  class?: string;
+}
+const { title, tags, pubDate, cover, class: className } = Astro.props;
+const src = cover && (cover.startsWith('/') ? url(cover) : cover);
+
+const theme = coverTheme(tags);
+const lines = wrapTitle(title);
+const size = titleFontSize(lines.length);
+const lineH = size * 1.2;
+const titleY = COVER_H / 2 - ((lines.length - 1) * lineH + size) / 2 + size * 0.8;
+const gid = `g-${Math.random().toString(36).slice(2, 8)}`;
+---
+{src ? (
+  <img class:list={['cover', className]} src={src} alt="" width={COVER_W} height={COVER_H} loading="lazy" decoding="async" />
+) : (
+  <svg class:list={['cover', className]} viewBox={`0 0 ${COVER_W} ${COVER_H}`} role="img" aria-label={title} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color={theme.from} />
+        <stop offset="1" stop-color={theme.to} />
+      </linearGradient>
+    </defs>
+    <rect width={COVER_W} height={COVER_H} fill={`url(#${gid})`} />
+    <circle cx="1080" cy="90" r="220" fill="#fff" opacity=".06" />
+    <circle cx="1150" cy="560" r="140" fill="#fff" opacity=".05" />
+    <g font-family="'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" fill="#fff">
+      <text x="80" y="110" font-size="30" font-weight="700" fill={theme.accent} letter-spacing="2">{theme.label.toUpperCase()}</text>
+      <text x="80" y={titleY} font-size={size} font-weight="700">
+        {lines.map((l, i) => <tspan x="80" dy={i === 0 ? 0 : lineH}>{l}</tspan>)}
+      </text>
+      <text x="80" y="560" font-size="28" opacity=".85">{SITE_TITLE}</text>
+      <text x="1120" y="560" font-size="28" opacity=".85" text-anchor="end">{formatDate(pubDate)}</text>
+    </g>
+    <rect x="80" y="130" width="64" height="6" rx="3" fill={theme.accent} />
+  </svg>
+)}

@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Cover from '../components/Cover.astro';
 import { SITE_DESCRIPTION, LANGUAGE_TAGS } from '../consts';
 import { getPosts, formatDate, url } from '../utils';
 
@@ -29,11 +30,14 @@ const otherTags = [...new Set(all.flatMap((p) => p.data.tags))]
     <section>
       <h2 class="section-title">Bài mới nhất</h2>
       <a class="featured" href={url(`/blog/${featured.id}/`)}>
+        <Cover title={featured.data.title} tags={featured.data.tags} pubDate={featured.data.pubDate} cover={featured.data.cover} />
+        <div class="featured-body">
         <time datetime={featured.data.pubDate.toISOString()}>{formatDate(featured.data.pubDate)}</time>
         <h3>{featured.data.title}</h3>
         <p>{featured.data.description}</p>
         <span class="chips">{featured.data.tags.map((t) => <span>#{t}</span>)}</span>
         <span class="more">Đọc tiếp →</span>
+        </div>
       </a>
     </section>
   )}
@@ -62,9 +66,12 @@ const otherTags = [...new Set(all.flatMap((p) => p.data.tags))]
       <div class="grid">
         {latest.map((p) => (
           <a class="post-card" href={url(`/blog/${p.id}/`)}>
+            <Cover title={p.data.title} tags={p.data.tags} pubDate={p.data.pubDate} cover={p.data.cover} />
+            <div class="post-card-body">
             <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
             <h3>{p.data.title}</h3>
             <p>{p.data.description}</p>
+            </div>
           </a>
         ))}
       </div>

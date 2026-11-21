@@ -10,6 +10,9 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    // Ảnh bìa tuỳ chọn: đường dẫn trong public/ (vd "/covers/abc.png") hoặc URL đầy đủ.
+    // Để trống thì dùng ảnh SVG tự tạo từ title + tags.
+    cover: z.string().optional(),
   }),
 });
 

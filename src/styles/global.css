@@ -101,3 +101,13 @@ main > section + section { margin-top: 3rem; }
 .cta-box h2 { margin: 0 0 .4rem; }
 .cta-box p { margin: 0; color: var(--muted); }
 .cta-box .actions { margin: 1.1rem 0 0; }
+
+/* cover */
+.cover { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: cover; }
+.cover-hero { border-radius: 12px; margin: 0 0 1.5rem; border: 1px solid var(--border); }
+.featured, .post-card { overflow: hidden; }
+.featured { padding: 0; }
+.featured-body { padding: 1.25rem 1.5rem 1.5rem; }
+.post-card { padding: 0; }
+.post-card-body { padding: 1rem 1.25rem 1.1rem; }
+.featured .cover, .post-card .cover { border-bottom: 1px solid var(--border); }
