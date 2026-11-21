@@ -9,11 +9,15 @@ const [featured, ...rest] = all;
 const latest = rest.slice(0, 6);
 
 const count = (tag: string) => all.filter((p) => p.data.tags.includes(tag)).length;
-const otherTags = [...new Set(all.flatMap((p) => p.data.tags))]
-  .filter((t) => !LANGUAGE_TAGS.some((l) => l.tag === t))
-  .map((t) => ({ tag: t, n: count(t) }))
-  .sort((a, b) => b.n - a.n)
-  .slice(0, 8);
+// Biểu đồ chủ đề: tag có nhiều bài nhất ở trên, thanh dài theo số bài.
+const TOP_TAGS = 10;
+const allTags = [...new Set(all.flatMap((p) => p.data.tags))];
+const label = (t: string) => LANGUAGE_TAGS.find((l) => l.tag === t)?.label ?? `#${t}`;
+const tagStats = allTags
+  .map((t) => ({ tag: t, label: label(t), n: count(t) }))
+  .sort((a, b) => b.n - a.n || a.tag.localeCompare(b.tag))
+  .slice(0, TOP_TAGS);
+const maxCount = Math.max(1, ...tagStats.map((t) => t.n));
 ---
 <Base>
   <section class="hero">
@@ -44,20 +48,18 @@ const otherTags = [...new Set(all.flatMap((p) => p.data.tags))]
 
   <section>
     <h2 class="section-title">Chủ đề</h2>
-    <div class="topics">
-      {LANGUAGE_TAGS.map(({ tag, label }) => (
-        <a class="topic" href={url(`/tags/${tag}/`)}>
-          <strong>{label}</strong>
-          <span>{count(tag) ? `${count(tag)} bài` : 'Sắp có'}</span>
-        </a>
+    <ul class="tag-chart">
+      {tagStats.map(({ tag, label, n }) => (
+        <li>
+          <a href={url(`/tags/${tag}/`)} title={`${n} bài về ${label}`}>
+            <span class="tag-name">{label}</span>
+            <span class="tag-track"><span class="tag-bar" style={`width: ${(n / maxCount) * 100}%`} /></span>
+            <span class="tag-count">{n}</span>
+          </a>
+        </li>
       ))}
-    </div>
-    {otherTags.length > 0 && (
-      <p class="chips more-tags">
-        {otherTags.map(({ tag }) => <a href={url(`/tags/${tag}/`)}>#{tag}</a>)}
-        <a href={url('/tags/')}>Tất cả tag →</a>
-      </p>
-    )}
+    </ul>
+    {allTags.length > TOP_TAGS && <p class="see-all"><a href={url('/tags/')}>Tất cả {allTags.length} tag →</a></p>}
   </section>
 
   {latest.length > 0 && (
