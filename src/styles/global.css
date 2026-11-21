@@ -139,3 +139,15 @@ main > section + section { margin-top: 3rem; }
   .tag-mosaic { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 4.5rem; }
   .tag-mosaic .s3 { grid-column: span 3; grid-row: span 2; }
 }
+
+/* post list thumbnails: màu theo tag đầu tiên, không có chữ */
+.posts li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; align-items: start; }
+.posts .thumb { display: block; aspect-ratio: 1200 / 630; border-radius: 8px; margin-top: .35rem;
+  background:
+    radial-gradient(circle at 88% 12%, rgb(255 255 255 / .12) 0 22%, transparent 23%),
+    radial-gradient(circle at 96% 92%, rgb(255 255 255 / .08) 0 14%, transparent 15%),
+    linear-gradient(135deg, var(--from), var(--to));
+  border: 1px solid var(--border); transition: filter .15s; }
+.posts .thumb:hover { filter: brightness(1.15); }
+.posts .post-body { min-width: 0; }
+@media (max-width: 30rem) { .posts li { grid-template-columns: 5rem 1fr; gap: .75rem; } }
