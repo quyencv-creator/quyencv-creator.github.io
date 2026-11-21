@@ -118,3 +118,24 @@ main > section + section { margin-top: 3rem; }
 .post-card { padding: 0; }
 .post-card-body { padding: 1rem 1.25rem 1.1rem; }
 .featured .cover, .post-card .cover { border-bottom: 1px solid var(--border); }
+
+/* tags page: mosaic */
+.tag-mosaic { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: .5rem;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); grid-auto-rows: 5.5rem; grid-auto-flow: dense; }
+.tag-mosaic li { border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, var(--from), var(--to)); }
+.tag-mosaic .s2 { grid-column: span 2; grid-row: span 2; }
+.tag-mosaic .s3 { grid-column: span 3; grid-row: span 3; }
+.tag-mosaic a { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; padding: .6rem .7rem;
+  color: #fff; transition: filter .15s, transform .15s; }
+.tag-mosaic a:hover { text-decoration: none; filter: brightness(1.15); }
+.tag-mosaic a:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.tag-mosaic .name { font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; font-size: .95rem; }
+.tag-mosaic .count { font-size: .75rem; opacity: .85; }
+.tag-mosaic .s2 .name { font-size: 1.4rem; }
+.tag-mosaic .s2 .count { font-size: .9rem; }
+.tag-mosaic .s3 .name { font-size: 2.1rem; }
+.tag-mosaic .s3 .count { font-size: 1rem; }
+@media (max-width: 30rem) {
+  .tag-mosaic { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 4.5rem; }
+  .tag-mosaic .s3 { grid-column: span 3; grid-row: span 2; }
+}

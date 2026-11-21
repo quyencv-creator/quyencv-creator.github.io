@@ -38,3 +38,13 @@ export function wrapTitle(title: string, maxChars = 26, maxLines = 4): string[] 
 }
 
 export const titleFontSize = (lines: number) => (lines <= 2 ? 72 : lines === 3 ? 62 : 54);
+
+// Màu nền cho ô tag: tag có theme riêng thì dùng theme, tag khác lấy màu theo mã băm của tên
+// để mỗi tag luôn cùng một màu. Nền tối, chữ trắng: đọc được ở cả light và dark mode.
+export function tagColors(tag: string): { from: string; to: string } {
+  const theme = THEMES[tag];
+  if (theme) return { from: theme.from, to: theme.to };
+  let h = 0;
+  for (const ch of tag) h = (h * 31 + ch.codePointAt(0)!) % 360;
+  return { from: `hsl(${h} 55% 29%)`, to: `hsl(${(h + 25) % 360} 60% 20%)` };
+}
