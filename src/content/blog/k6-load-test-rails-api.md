@@ -158,7 +158,138 @@ config.assume_ssl = ENV["LOAD_TEST"].blank?
 
 **Rate limit (Rack::Attack, `rate_limit` của Rails 7.2+)**: k6 bắn từ một IP, sẽ bị chặn ngay. Đừng tắt hẳn trong code; chỉ nới ra khi có cờ `LOAD_TEST`, và **kiểm tra kỹ cờ này không bao giờ được set trên production**.
 
-**Dịch vụ bên ngoài** (thanh toán, email, SMS): dùng sandbox hoặc stub. Load test mà gửi 50.000 email thật là một ngày rất tệ.
+**Dịch vụ bên ngoài** (thanh toán, email, SMS): xem mục ngay dưới. Load test mà gửi 50.000 email thật là một ngày rất tệ.
+
+## Bước 1b: secret, env và API bên ngoài khi chạy production mode
+
+Đây là chỗ khiến nhiều team chùn tay: `RAILS_ENV=production` nghĩa là app sẽ đòi `RAILS_MASTER_KEY`, đọc `credentials.yml.enc`, và gọi Stripe, S3, SendGrid… thật. Nguyên tắc xuyên suốt:
+
+> **Load test chạy code production, nhưng không bao giờ chạm vào secret production hay dịch vụ production.**
+
+### Secret: credentials riêng cho load test
+
+Đừng bao giờ copy `RAILS_MASTER_KEY` của production vào máy dev hay CI để chạy load test. Key đó mở được mọi secret thật.
+
+Thay vào đó, tạo một bộ credentials riêng chứa toàn giá trị giả hoặc giá trị sandbox:
+
+```bash
+bin/rails credentials:edit --environment loadtest
+# tạo config/credentials/loadtest.yml.enc và config/credentials/loadtest.key
+```
+
+```yaml
+# nội dung loadtest.yml.enc (khi mở để sửa)
+secret_key_base: loadtest-only-not-a-real-secret
+stripe:
+  secret_key: sk_test_loadtest_fake
+  api_base: http://mock-apis:8080
+aws:
+  access_key_id: loadtest
+  secret_access_key: loadtest
+```
+
+Rồi cho production mode đọc bộ này khi có cờ `LOAD_TEST`, mà vẫn giữ `RAILS_ENV=production`:
+
+```ruby
+# config/environments/production.rb
+Rails.application.configure do
+  if ENV["LOAD_TEST"] == "1"
+    config.credentials.content_path = Rails.root.join("config/credentials/loadtest.yml.enc")
+    config.credentials.key_path     = Rails.root.join("config/credentials/loadtest.key")
+  end
+  # ...
+end
+```
+
+Commit file `.yml.enc`, còn `loadtest.key` thì đưa vào `.gitignore` và CI secret như mọi key khác. Dù bên trong toàn giá trị giả, giữ thói quen này để không ai quen tay commit key.
+
+Vì sao không tạo hẳn một `RAILS_ENV=loadtest` (copy `production.rb`)? Làm được, nhưng sẽ phát sinh lệch: gem trong `group :production` của Gemfile không được load, `Rails.env.production?` trả về `false` ở những chỗ code rẽ nhánh theo môi trường, và bạn sẽ đo một thứ hơi khác production. Giữ `RAILS_ENV=production` và chỉ đổi nguồn credentials ít bất ngờ hơn.
+
+### Biến môi trường: không có giá trị mặc định trỏ về production
+
+```ruby
+# Nguy hiểm: quên set biến là gọi thẳng production
+PAYMENT_URL = ENV.fetch("PAYMENT_API_URL", "https://api.payment-provider.com")
+
+# An toàn: thiếu biến thì app không khởi động được
+PAYMENT_URL = ENV.fetch("PAYMENT_API_URL")
+```
+
+Nguyên tắc **fail-closed**: thiếu cấu hình thì crash ngay khi boot, không âm thầm rơi về giá trị thật. Nếu codebase đang hard-code URL dịch vụ ngoài, chuyển chúng ra ENV hoặc credentials là việc phải làm trước, và nó cũng có ích cho staging.
+
+### API bên ngoài: mock server thay vì sandbox hay stub trong code
+
+Có ba lựa chọn, và chúng không tương đương:
+
+| Cách | Ưu | Nhược |
+|---|---|---|
+| Sandbox của nhà cung cấp (Stripe test mode…) | Giống thật nhất | Rate limit thấp, có thể vi phạm điều khoản sử dụng, kết quả phụ thuộc mạng ngoài |
+| Stub trong code (`FakePaymentGateway`) | Đơn giản, nhanh | **Bỏ qua HTTP client, timeout, connection pool**: chính những thứ hay gãy dưới tải |
+| **Mock server qua HTTP** | Đi đúng đường code thật, chỉnh được độ trễ, không phụ thuộc bên ngoài | Phải viết mapping cho từng endpoint |
+
+Mình khuyên dùng **mock server**. Điểm quan trọng nhất mà stub trong code bỏ lỡ: **độ trễ**. Một request gọi Stripe mất 300ms là 300ms thread Puma bị giữ. Stub trả về ngay lập tức thì load test sẽ báo hệ thống chịu được gấp nhiều lần thực tế.
+
+Ví dụ với WireMock, thêm vào `docker-compose.yml`:
+
+```yaml
+  mock-apis:
+    image: wiremock/wiremock:3.9.1
+    volumes:
+      - ./mocks:/home/wiremock/mappings
+```
+
+```json
+// load_test/mocks/payment-charge.json
+{
+  "request": { "method": "POST", "urlPath": "/v1/charges" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": { "id": "ch_loadtest", "status": "succeeded" },
+    "delayDistribution": { "type": "lognormal", "median": 300, "sigma": 0.4 }
+  }
+}
+```
+
+`delayDistribution` kiểu lognormal mô phỏng độ trễ thật: đa số quanh 300ms, thỉnh thoảng có request chậm hơn nhiều. Lấy median từ APM production (thời gian gọi external service).
+
+Với các dịch vụ phổ biến, có sẵn bản thay thế chạy local:
+
+- **S3** → MinIO hoặc LocalStack (`aws-sdk-s3` cấu hình được `endpoint` và `force_path_style`).
+- **Email** → Mailpit qua SMTP, hoặc `config.action_mailer.delivery_method = :test` nếu không cần đo phần gửi mail.
+- **SDK có `api_base`** (Stripe, nhiều SDK khác): trỏ về mock server qua credentials như trên.
+- **Xác thực JWT bên thứ ba** (Auth0, Cognito): mock endpoint JWKS, ký token bằng key load test.
+
+### Lưới an toàn cuối cùng: chặn internet ở tầng mạng
+
+Dù cẩn thận tới đâu, vẫn có thể sót một chỗ gọi ra ngoài (một gem analytics, một initializer gửi metric). Cách chắc chắn nhất: **cho container app không có đường ra internet**.
+
+```yaml
+networks:
+  loadtest:
+    internal: true   # không có route ra ngoài
+
+services:
+  api:
+    networks: [loadtest]
+  db:
+    networks: [loadtest]
+  redis:
+    networks: [loadtest]
+  mock-apis:
+    networks: [loadtest]
+  k6:
+    networks: [loadtest]
+```
+
+Chỗ nào gọi ra ngoài mà chưa mock sẽ lỗi kết nối ngay, hiện rõ trong log. Như vậy tốt hơn nhiều so với âm thầm tính tiền thẻ thật. (Build image vẫn cần internet để tải gem; `internal: true` chỉ áp dụng khi container chạy.)
+
+### Đừng quên background job
+
+Nếu `POST /orders` đẩy job Sidekiq gửi email, gọi webhook, đồng bộ sang ERP, thì những job đó cũng chạy dưới tải. Thêm container Sidekiq dùng chung `.env.loadtest`, cùng network nội bộ, để:
+
+- Job cũng gọi vào mock, không gọi ra ngoài.
+- Đo được độ dài hàng đợi. Hàng đợi tăng mãi không giảm nghĩa là worker không theo kịp, dù API vẫn trả response nhanh.
 
 ## Bước 2: dữ liệu đủ lớn và giống thật
 
