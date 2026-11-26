@@ -2,7 +2,6 @@
 title: "Postmortem là gì, tại sao dev nên đọc, và đọc ở đâu"
 description: Postmortem là bản phân tích sau sự cố, viết ra để học chứ không để đổ lỗi. Đọc postmortem của người khác là cách rẻ nhất để có kinh nghiệm xử lý sự cố mà không phải tự làm sập production. Kèm nguồn đọc công khai, cách đọc cho hiệu quả, và cách tự viết postmortem khi chính mình gặp sự cố.
 pubDate: 2026-11-26
-draft: true
 tags: [thinking, devops, backend]
 ---
 
@@ -182,11 +181,11 @@ Khi chính bạn là người gây lỗi, cám dỗ ngược lại cũng nguy hi
 
 | Việc | Loại | Người phụ trách | Hạn |
 |---|---|---|---|
-| Đưa lời gọi API vận chuyển ra khỏi transaction | Ngăn chặn | Bình | 28/11 |
-| Đặt timeout 2s và circuit breaker cho mọi lời gọi ra ngoài | Ngăn chặn | Bình | 5/12 |
-| Alert khi p95 thời gian gọi đối tác > 1s | Phát hiện | An | 3/12 |
-| Feature flag tắt tính phí realtime, ghi vào runbook | Giảm thiểu | An | 30/11 |
-| Thêm rule lint cảnh báo HTTP call trong `transaction do` | Ngăn chặn | Châu | 10/12 |
+| Đưa lời gọi API vận chuyển ra khỏi transaction | Ngăn chặn | Bình | 22/11 |
+| Đặt timeout 2s và circuit breaker cho mọi lời gọi ra ngoài | Ngăn chặn | Bình | 29/11 |
+| Alert khi p95 thời gian gọi đối tác > 1s | Phát hiện | An | 27/11 |
+| Feature flag tắt tính phí realtime, ghi vào runbook | Giảm thiểu | An | 24/11 |
+| Thêm rule lint cảnh báo HTTP call trong `transaction do` | Ngăn chặn | Châu | 4/12 |
 
 Chia hành động theo ba loại giúp không bỏ sót: **ngăn chặn** (để không xảy ra), **phát hiện** (để biết sớm hơn), **giảm thiểu** (để khi xảy ra thì ít thiệt hại hơn). Một postmortem chỉ có hành động ngăn chặn thường là chưa nghĩ đủ, vì không có gì ngăn được mọi sự cố.
 
