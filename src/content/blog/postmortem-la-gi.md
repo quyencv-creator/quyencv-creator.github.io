@@ -192,6 +192,61 @@ Chia hành động theo ba loại giúp không bỏ sót: **ngăn chặn** (đ�
 
 Và quan trọng nhất: **theo dõi tới khi các hành động được làm xong**. Postmortem có danh sách hành động đẹp mà không ai làm còn tệ hơn không viết, vì nó tạo cảm giác đã giải quyết xong.
 
+### Một ví dụ hoàn chỉnh
+
+Ghép tất cả lại, đây là một postmortem đầy đủ cho sự cố pool connection ở trên (sự cố minh hoạ, cùng tình huống với bài [debug hệ thống thật](/blog/debug-he-thong-that-thoi-ai/)). Độ dài như thế này là đủ cho phần lớn sự cố.
+
+> **[2026-11-20] Đặt hàng thất bại do đối tác vận chuyển chậm**
+>
+> **Tóm tắt.** Từ 22:41 tới 23:16, khoảng 18% request đặt hàng thất bại. API tính phí ship của đối tác vận chuyển chậm từ khoảng 150ms lên khoảng 8 giây. Vì lời gọi này nằm trong transaction và không có timeout, mỗi request giữ connection database suốt 8 giây, làm cạn pool. Khôi phục bằng cách tắt tính phí ship realtime qua feature flag.
+>
+> **Ảnh hưởng.**
+> - Thời gian: 35 phút (22:41–23:16).
+> - Khoảng 22.700 trên 126.000 request `POST /orders` trả lỗi 500 (tính từ log Nginx).
+> - Số đơn hàng mất thực tế: chưa xác định, vì một phần user đã thử lại thành công. Đang đối chiếu với dữ liệu giỏ hàng bị bỏ.
+> - Không mất dữ liệu: các transaction lỗi đều rollback.
+> - Từ 23:14 tới khi bật lại tính năng (09:30 hôm sau), phí ship tính theo mức cố định 30.000đ. Chênh lệch so với phí thật đang được kế toán tổng hợp.
+>
+> **Dòng thời gian** (giờ Việt Nam)
+> - ~22:38 Đối tác bắt đầu chậm (thấy được sau, qua log thời gian gọi ra ngoài).
+> - 22:41 Alert tỉ lệ lỗi `POST /orders` > 5%. Bình nhận alert.
+> - 22:44 Log đầy `ActiveRecord::ConnectionTimeoutError`.
+> - 22:47 Giả thuyết: pool nhỏ. Tăng `pool` 5 → 20 và deploy.
+> - 22:55 Lỗi giảm vài phút sau khi restart pod, rồi quay lại như cũ.
+> - 23:06 `pg_stat_activity` cho thấy 40 connection ở trạng thái `idle in transaction`, mỗi cái giữ 6–8 giây.
+> - 23:10 Tìm thấy lời gọi API vận chuyển nằm trong `Order.transaction`, không đặt timeout.
+> - 23:14 Bật flag `shipping_fee_realtime = false`.
+> - 23:16 Tỉ lệ lỗi về 0. Kết thúc sự cố.
+> - 23:40 Revert thay đổi `pool` về 5.
+>
+> **Nguyên nhân.**
+> - Lời gọi API tính phí ship được thêm vào bên trong transaction tạo đơn hàng (PR #1482, merge 13/11).
+> - `Net::HTTP` không đặt timeout nên dùng mặc định 60 giây.
+> - Đối tác chậm lên khoảng 8 giây, không rõ lý do (đã hỏi đối tác, chưa có phản hồi).
+>
+> Cơ chế: 60 request/giây × 8 giây giữ connection = cần khoảng 480 connection cùng lúc, hệ thống chỉ có 40 (8 process × pool 5). Pool cạn, các thread chờ hết `checkout_timeout` 5 giây rồi báo lỗi. Tăng pool không có tác dụng vì mỗi process chỉ có 5 thread, mỗi thread dùng tối đa một connection.
+>
+> **Phát hiện.** Alert tỉ lệ lỗi báo sau khoảng 3 phút. Không có alert nào cho độ trễ gọi ra đối tác, nên mất 25 phút mới tìm ra hướng đúng.
+>
+> **Làm tốt.** Alert tỉ lệ lỗi hoạt động. Feature flag tắt tính phí realtime đã có sẵn, nên khi tìm ra nguyên nhân thì khôi phục được trong 2 phút.
+>
+> **Chưa tốt.** Giả thuyết đầu tiên (pool nhỏ) được áp vào production mà chưa kiểm chứng. Không có dashboard cho thời gian giữ connection. Lúc review PR #1482 không ai để ý lời gọi HTTP nằm trong transaction.
+>
+> **Gặp may.** Sự cố xảy ra lúc 22h, traffic chỉ bằng khoảng một nửa giờ cao điểm buổi trưa. Nếu đối tác chậm vào giờ trưa thì sẽ cần khoảng gấp đôi số connection, và lỗi sẽ lan sang mọi endpoint khác dùng chung database.
+>
+> **Hành động khắc phục.**
+>
+> | Việc | Loại | Người phụ trách | Hạn |
+> |---|---|---|---|
+> | Đưa lời gọi API vận chuyển ra khỏi transaction | Ngăn chặn | Bình | 22/11 |
+> | Timeout 2s + circuit breaker cho mọi lời gọi ra ngoài | Ngăn chặn | Bình | 29/11 |
+> | Rule lint cảnh báo HTTP call trong `transaction do` | Ngăn chặn | Châu | 4/12 |
+> | Alert khi p95 gọi đối tác > 1s | Phát hiện | An | 27/11 |
+> | Dashboard thời gian giữ connection và số connection `idle in transaction` | Phát hiện | An | 4/12 |
+> | Ghi flag `shipping_fee_realtime` vào runbook xử lý sự cố | Giảm thiểu | An | 24/11 |
+
+Để ý vài điểm trong ví dụ trên. Bình là người nhận alert và cũng là người đề xuất tăng pool, nhưng postmortem không nói "Bình xử lý sai". Nó nói "giả thuyết đầu tiên được áp vào production mà chưa kiểm chứng" và "không có dashboard cho thời gian giữ connection", vì đó là những thứ sửa được. Những chỗ chưa biết ("số đơn hàng mất thực tế", "lý do đối tác chậm") được ghi thẳng là chưa biết, không đoán cho đủ. Và mục "gặp may" chỉ ra một rủi ro lớn hơn chính sự cố này, thứ mà nếu không viết ra thì sẽ không ai nghĩ tới.
+
 ### Ngay cả khi chỉ có một mình
 
 Nếu bạn làm một mình, hoặc team không có văn hoá postmortem, vẫn nên viết, dù chỉ nửa trang trong một file markdown riêng. Bạn sẽ ngạc nhiên vì mình quên nhanh tới mức nào. Sáu tháng sau, khi một lỗi trông quen quen quay lại, ghi chép đó sẽ cứu bạn hàng giờ.
