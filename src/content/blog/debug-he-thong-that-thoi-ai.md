@@ -2,7 +2,6 @@
 title: "Kỹ năng debug hệ thống thật trong thời AI"
 description: AI đọc stack trace và đề xuất cách sửa trong vài giây, nhưng lỗi trên production hiếm khi nằm ở chỗ stack trace chỉ tới. Phân biệt triệu chứng với nguyên nhân, quan sát trước khi đoán, thay đổi từng biến một, chứng minh bản sửa, và dùng AI như một người cộng sự chứ không phải người phán xử.
 pubDate: 2026-11-26
-draft: true
 tags: [thinking, ai, backend, devops]
 ---
 
