@@ -6,19 +6,35 @@ draft: true
 tags: [thinking, ai, backend, devops]
 ---
 
-Mười một giờ đêm, API đặt hàng bắt đầu trả lỗi 500. Log đầy một dòng:
+Thử hình dung một Rails API bán hàng với cấu hình rất bình thường: 4 pod, mỗi pod chạy Puma 2 worker, mỗi worker 5 thread, `pool: 5` trong `database.yml`. Tổng cộng 8 process, 40 thread, 40 connection tới Postgres, trong khi `max_connections` của Postgres là 100. Dư dả.
+
+Endpoint `POST /orders` nhận khoảng 60 request mỗi giây vào buổi tối. Mỗi request mở một transaction, trong đó có lời gọi sang đối tác vận chuyển để tính phí ship, mất khoảng 150ms. Cộng thêm các query, mỗi request giữ một connection chừng 0,2 giây.
+
+Áp định luật Little (số việc đang xử lý = tốc độ đến × thời gian xử lý): 60 × 0,2 = **12 connection** bận cùng lúc, trên tổng 40. Hệ thống chạy ổn suốt nhiều tháng.
+
+Một tối, API của đối tác chậm đi: thay vì 150ms, mỗi lần gọi mất khoảng 8 giây. Code gọi đối tác dùng `Net::HTTP` không đặt timeout, nên nó dùng mặc định là 60 giây, tức là ngoan ngoãn đợi đủ 8 giây. Và vì lời gọi nằm **trong transaction**, connection database bị giữ suốt 8 giây đó.
+
+Làm lại phép tính: 60 × 8 = **480 connection** cần dùng cùng lúc, trong khi chỉ có 40. Pool cạn trong chưa tới một giây. Các thread còn lại xếp hàng chờ connection, chờ đủ 5 giây (`checkout_timeout` mặc định), rồi log đầy một dòng:
 
 ```text
 ActiveRecord::ConnectionTimeoutError: could not obtain a connection from the pool within 5.000 seconds
 ```
 
-Người trực copy dòng lỗi dán vào AI. Câu trả lời đến ngay, rõ ràng, tự tin: pool connection quá nhỏ so với số thread, hãy tăng `pool` trong `database.yml` từ 5 lên 20. Kèm cả đoạn config mẫu.
+Người trực copy dòng lỗi dán vào AI. Câu trả lời đến ngay, rõ ràng, tự tin: pool quá nhỏ, hãy tăng `pool` từ 5 lên 20. Kèm cả đoạn config mẫu.
 
-Nghe hợp lý. Deploy. Lỗi giảm được vài phút, rồi quay lại, lần này kèm theo CPU của database tăng vọt.
+Deploy. Lỗi giảm được vài phút, vì restart pod xoá sạch hàng đợi, rồi quay lại y như cũ. Tất nhiên: mỗi worker vẫn chỉ có 5 thread, mỗi thread dùng tối đa một connection, nên 15 connection thêm vào pool không bao giờ được dùng tới. Bản sửa đó **không thay đổi gì cả**.
 
-Nguyên nhân thật nằm ở chỗ khác. Một tuần trước, ai đó thêm lời gọi API sang đối tác vận chuyển để tính phí ship, **đặt bên trong một transaction**, và không đặt timeout. Tối hôm đó đối tác chậm. Mỗi request giữ một connection database trong lúc chờ HTTP, có khi tới ba mươi giây. Pool cạn không phải vì nhỏ, mà vì connection bị giữ để làm việc không liên quan gì tới database. Tăng pool chỉ có nghĩa là có thêm nhiều connection nằm chờ, cộng thêm áp lực lên database.
+Người trực tăng tiếp `RAILS_MAX_THREADS` lên 20 cho "khớp" với pool. Giờ là 8 × 20 = 160 connection, vượt `max_connections` 100 của Postgres, và một loại lỗi mới xuất hiện:
 
-AI không sai về kiến thức. Pool nhỏ đúng là một nguyên nhân phổ biến của lỗi đó. Nó sai vì nó chỉ thấy **triệu chứng** mà bạn đưa cho nó, không thấy **hệ thống** đang chạy.
+```text
+FATAL: sorry, too many clients already
+```
+
+Mà kể cả nếu Postgres nhận đủ 160, vẫn còn thiếu xa 480.
+
+Nguyên nhân chưa bao giờ là pool nhỏ. Nguyên nhân là connection bị giữ để làm một việc chẳng liên quan gì tới database. Cách sửa đúng không đụng tới pool: đưa lời gọi HTTP ra khỏi transaction, đặt timeout 2 giây, và thêm circuit breaker để đối tác chậm thì ngắt sớm thay vì kéo cả hệ thống chết theo. Sau khi sửa, thời gian giữ connection quay về khoảng 50ms, dù đối tác có chậm tới đâu.
+
+AI không sai về kiến thức. Pool nhỏ đúng là một nguyên nhân phổ biến của lỗi đó. Nó sai vì nó chỉ thấy **triệu chứng** mà bạn đưa cho nó, không thấy **hệ thống** đang chạy. Nếu người trực đưa thêm ba con số (số thread, thời gian giữ connection, độ trễ của đối tác), có lẽ AI cũng đã tính ra được. Nhưng biết cần đưa con số nào chính là kỹ năng.
 
 Bài này nói về kỹ năng nhìn thấy hệ thống đó.
 
@@ -89,13 +105,13 @@ Không cần biết hết, nhưng càng biết nhiều tầng, bạn càng có n
 
 ### Phân biệt triệu chứng và nguyên nhân
 
-Hỏi "tại sao" cho tới khi bạn mô tả được một **cơ chế** giải thích được mọi quan sát, từ đầu đến cuối. "Pool cạn" là triệu chứng. "Connection bị giữ vì lời gọi HTTP không có timeout nằm trong transaction, và đối tác chậm từ 22 giờ 40" là cơ chế. Khi có cơ chế, cách sửa hiện ra rõ ràng: đưa lời gọi HTTP ra khỏi transaction, đặt timeout, thêm circuit breaker. Và bạn biết vì sao tăng pool là sai.
+Hỏi "tại sao" cho tới khi bạn mô tả được một **cơ chế** giải thích được mọi quan sát, từ đầu đến cuối. "Pool cạn" là triệu chứng. "Mỗi request giữ connection 8 giây vì lời gọi HTTP không có timeout nằm trong transaction, nên 60 request/giây cần 480 connection trong khi chỉ có 40" là cơ chế. Khi có cơ chế, cách sửa hiện ra rõ ràng: đưa lời gọi HTTP ra khỏi transaction, đặt timeout, thêm circuit breaker. Và bạn biết vì sao tăng pool là sai.
 
 ### Chứng minh bản sửa có tác dụng
 
 Lỗi biến mất sau khi deploy bản sửa chưa chứng minh được gì. Có thể đối tác vừa nhanh trở lại. Có thể traffic vừa giảm. Có thể bạn may mắn.
 
-Bản sửa được chứng minh khi bạn **tái hiện được lỗi trước khi sửa**, và **không tái hiện được sau khi sửa**, trong cùng điều kiện. Ở ví dụ đầu bài: dựng môi trường có mock đối tác chậm 30 giây, bắn tải (một [bộ load test](/blog/k6-load-test-rails-api/) dùng đúng lúc này), thấy pool cạn; áp bản sửa, bắn lại, không cạn nữa. Không tái hiện được lỗi thì ít nhất phải có metric cho thấy cơ chế đã thay đổi, ví dụ số connection `idle in transaction` giảm về gần 0.
+Bản sửa được chứng minh khi bạn **tái hiện được lỗi trước khi sửa**, và **không tái hiện được sau khi sửa**, trong cùng điều kiện. Ở ví dụ đầu bài: dựng môi trường có mock đối tác chậm 8 giây, bắn 60 request/giây (một [bộ load test](/blog/k6-load-test-rails-api/) dùng đúng lúc này), thấy pool cạn; áp bản sửa, bắn lại, số connection bận quay về quanh mức 60 × 0,05 = 3. Không tái hiện được lỗi thì ít nhất phải có metric cho thấy cơ chế đã thay đổi, ví dụ số connection `idle in transaction` giảm về gần 0.
 
 ## Dùng AI khi debug: cộng sự, không phải người phán xử
 
