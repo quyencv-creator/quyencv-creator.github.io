@@ -97,8 +97,103 @@ Bài viết đáng đọc vì chính Cloudflare nói rằng câu chuyện thật
 
 **Đọc cùng team.** Một số team có buổi đọc postmortem hằng tháng: chọn một bài, mỗi người đọc trước, rồi cùng thảo luận "chuyện này xảy ra ở mình thì sao". Đây là buổi học rẻ nhất mà team có thể tổ chức.
 
-## Và hãy viết postmortem của chính mình
+## Tự viết postmortem khi chính mình gặp sự cố
 
-Đọc postmortem của người khác là bước một. Bước hai là bắt đầu viết cho sự cố của chính team mình, kể cả sự cố nhỏ: một lần deploy lỗi phải rollback, một cron job chạy sai, một tối API chậm. Không cần dài. Chỉ cần dòng thời gian, chuỗi nguyên nhân, và hai ba hành động khắc phục có người nhận.
+Đọc postmortem của người khác là bước một. Bước hai là viết cho sự cố của chính mình, kể cả sự cố nhỏ: một lần deploy lỗi phải rollback, một cron job chạy sai, một tối API chậm mười phút. Sự cố nhỏ là lúc tập viết tốt nhất, vì không ai căng thẳng và không ai cần tìm người chịu trách nhiệm.
+
+### Ghi chép ngay trong lúc xử lý
+
+Phần khó viết nhất của postmortem là dòng thời gian, và nó gần như không thể dựng lại chính xác sau hai ngày. Vì vậy, ngay khi sự cố bắt đầu, mở một chỗ ghi chép chung (một kênh chat riêng cho sự cố, hoặc một file) và ghi lại mọi thứ kèm giờ: thấy gì, nghi gì, chạy lệnh gì, kết quả ra sao.
+
+```text
+22:41  Alert: tỉ lệ lỗi POST /orders > 5%
+22:44  Log: ActiveRecord::ConnectionTimeoutError hàng loạt
+22:47  Nghi pool nhỏ, tăng pool 5 -> 20, deploy
+22:55  Lỗi giảm vài phút rồi quay lại
+23:06  pg_stat_activity: 40 connection "idle in transaction", giữ 6-8 giây
+23:10  Thấy lời gọi API vận chuyển nằm trong transaction, không timeout
+23:14  Bật feature flag tắt tính phí ship realtime, dùng phí cố định
+23:16  Tỉ lệ lỗi về 0
+```
+
+Ghi cả những hướng đi sai, như dòng 22:47 ở trên. Đó là phần học được nhiều nhất, và cũng là phần người ta hay xoá đi cho đẹp. Ghi giờ kèm múi giờ nếu team ở nhiều nơi. Nếu được, lưu lại ảnh chụp dashboard và đoạn log quan trọng trước khi chúng bị xoay vòng mất.
+
+### Viết trong vòng một hai ngày
+
+Viết khi trí nhớ còn tươi, thường là trong 24–48 giờ sau khi sự cố kết thúc. Để quá một tuần thì chi tiết đã mờ, và động lực cũng mất theo.
+
+### Một template đủ dùng
+
+Không cần template phức tạp. Đây là bản mình thấy đủ cho phần lớn sự cố:
+
+```markdown
+# [Ngày] Tên ngắn của sự cố
+
+## Tóm tắt
+2-3 câu: chuyện gì xảy ra, ảnh hưởng thế nào, đã xử lý ra sao.
+
+## Ảnh hưởng
+- Thời gian: từ ... đến ... (bao lâu)
+- Ai bị ảnh hưởng, bao nhiêu: số request lỗi, số user, số đơn hàng...
+- Mất dữ liệu / thiệt hại tiền: có / không, bao nhiêu
+
+## Dòng thời gian
+Copy từ ghi chép lúc xử lý, làm gọn lại, giữ cả hướng đi sai.
+
+## Nguyên nhân
+Chuỗi các yếu tố dẫn tới sự cố, không phải một câu.
+Cơ chế: vì sao những yếu tố đó gộp lại thì sinh ra đúng triệu chứng đã thấy.
+
+## Phát hiện thế nào
+Alert báo, khách báo, hay tình cờ thấy? Mất bao lâu từ lúc bắt đầu tới lúc biết?
+
+## Điều làm tốt / chưa tốt / gặp may
+
+## Hành động khắc phục
+| Việc | Loại | Người phụ trách | Hạn |
+|------|------|-----------------|-----|
+```
+
+### Ảnh hưởng: đo bằng con số
+
+"Một số user bị lỗi" không nói lên gì. "Từ 22:41 tới 23:16, khoảng 18% request đặt hàng thất bại" thì có. Lấy số từ log và metric, không ước lượng bằng cảm giác. Nếu không đo được thì ghi rõ "không đo được vì thiếu metric X", và đó tự nó đã là một hành động khắc phục.
+
+### Nguyên nhân: hỏi tiếp cho tới khi thấy cơ chế
+
+Đừng dừng ở câu trả lời đầu tiên. "Do pool connection cạn" là triệu chứng. Hỏi tiếp: tại sao cạn? Vì connection bị giữ lâu. Tại sao bị giữ lâu? Vì lời gọi HTTP nằm trong transaction. Tại sao lời gọi đó không bị cắt? Vì không đặt timeout. Tại sao review không bắt được? Vì không có quy ước nào về gọi ra ngoài trong transaction.
+
+Kỹ thuật hỏi "tại sao" nhiều lần rất hữu ích, nhưng có một cái bẫy: nó dễ dẫn tới **một** nguyên nhân gốc duy nhất. Sự cố thật thường có nhiều nhánh cùng góp phần. Ở ví dụ trên còn có nhánh "đối tác chậm" và nhánh "alert chỉ báo tỉ lệ lỗi, không báo độ trễ gọi ra ngoài". Ghi hết các nhánh.
+
+### Viết không đổ lỗi, kể cả khi người gây lỗi là chính mình
+
+Không đổ lỗi không có nghĩa là không nói chuyện gì đã xảy ra. Nó có nghĩa là mô tả **hành động và bối cảnh**, không phán xét **con người**.
+
+| Đổ lỗi | Không đổ lỗi |
+|---|---|
+| "Anh A quên đặt timeout." | "Lời gọi API vận chuyển không có timeout. Thư viện HTTP mặc định chờ 60 giây, và code review không có bước kiểm tra timeout cho lời gọi ra ngoài." |
+| "Người trực xử lý sai, tăng pool làm tình hình tệ hơn." | "Thông báo lỗi chỉ ra pool, nên giả thuyết đầu tiên là pool nhỏ. Lúc đó chưa có dashboard cho thời gian giữ connection." |
+| "Do sơ suất của team backend." | (Câu này không có thông tin gì. Xoá.) |
+
+Khi chính bạn là người gây lỗi, cám dỗ ngược lại cũng nguy hiểm không kém: tự nhận hết rồi kết luận "lần sau mình sẽ cẩn thận hơn". Câu đó không ngăn được sự cố nào. Câu hỏi đúng vẫn là: hệ thống, công cụ, quy trình nào đã cho phép sai sót đó gây ra hậu quả?
+
+### Hành động khắc phục: cụ thể, có người, có hạn
+
+"Cẩn thận hơn khi review", "cải thiện monitoring" không phải hành động, vì không ai biết khi nào thì xong. Một hành động tốt thì kiểm tra được là đã làm hay chưa:
+
+| Việc | Loại | Người phụ trách | Hạn |
+|---|---|---|---|
+| Đưa lời gọi API vận chuyển ra khỏi transaction | Ngăn chặn | Bình | 28/11 |
+| Đặt timeout 2s và circuit breaker cho mọi lời gọi ra ngoài | Ngăn chặn | Bình | 5/12 |
+| Alert khi p95 thời gian gọi đối tác > 1s | Phát hiện | An | 3/12 |
+| Feature flag tắt tính phí realtime, ghi vào runbook | Giảm thiểu | An | 30/11 |
+| Thêm rule lint cảnh báo HTTP call trong `transaction do` | Ngăn chặn | Châu | 10/12 |
+
+Chia hành động theo ba loại giúp không bỏ sót: **ngăn chặn** (để không xảy ra), **phát hiện** (để biết sớm hơn), **giảm thiểu** (để khi xảy ra thì ít thiệt hại hơn). Một postmortem chỉ có hành động ngăn chặn thường là chưa nghĩ đủ, vì không có gì ngăn được mọi sự cố.
+
+Và quan trọng nhất: **theo dõi tới khi các hành động được làm xong**. Postmortem có danh sách hành động đẹp mà không ai làm còn tệ hơn không viết, vì nó tạo cảm giác đã giải quyết xong.
+
+### Ngay cả khi chỉ có một mình
+
+Nếu bạn làm một mình, hoặc team không có văn hoá postmortem, vẫn nên viết, dù chỉ nửa trang trong một file markdown riêng. Bạn sẽ ngạc nhiên vì mình quên nhanh tới mức nào. Sáu tháng sau, khi một lỗi trông quen quen quay lại, ghi chép đó sẽ cứu bạn hàng giờ.
 
 Sau một năm, tập postmortem đó sẽ là tài liệu giá trị nhất về hệ thống của bạn, giá trị hơn mọi sơ đồ kiến trúc, vì nó ghi lại hệ thống **thật sự** hành xử thế nào, chứ không phải hành xử thế nào trên giấy.
