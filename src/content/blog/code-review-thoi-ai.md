@@ -2,7 +2,6 @@
 title: "Code review thời AI: khi viết code rẻ hơn đọc code"
 description: AI làm việc viết code gần như miễn phí, nhưng đọc code vẫn tốn như cũ, nên code review thành điểm nghẽn của cả team. Người mở PR phải chịu trách nhiệm gì, reviewer nên nhìn vào đâu, những lỗi đặc trưng của code AI viết, và dùng AI để review thế nào cho đúng vai.
 pubDate: 2026-11-27
-draft: true
 tags: [thinking, ai, backend]
 ---
 
