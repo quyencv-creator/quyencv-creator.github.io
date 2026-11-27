@@ -32,15 +32,7 @@ Khách nói "làm cho tôi chức năng đặt hàng". Đội dev làm, demo ch�
 
 Tất cả những thứ trên đều là "kết quả". Chỉ là không ai nói ra lúc đặt hàng, và cũng không ai kiểm tra lúc nghiệm thu. Demo chạy được và một hệ thống chạy ổn ba năm là hai kết quả rất khác nhau, và người không biết kỹ thuật thường chỉ nhìn thấy cái thứ nhất.
 
-AI là một nhà thầu outsource cực nhanh, cực rẻ, làm việc 24/7, không bao giờ cãi. Nhưng nó mang theo **đúng những vấn đề** của outsource, cộng thêm vài vấn đề mới.
-
-## AI là nhà thầu outsource, với ba điểm khác
-
-**Nó làm đúng điều bạn nói, không phải điều bạn cần.** Một đội outsource giỏi sẽ hỏi lại: "Anh muốn xử lý thế nào khi hết hàng? Có cần phân quyền không?" AI cũng có thể hỏi, nhưng nếu bạn không biết đó là câu hỏi quan trọng, bạn sẽ trả lời qua loa, và nó sẽ làm theo câu trả lời qua loa đó, rất nhanh và rất tự tin.
-
-**Nó không chịu trách nhiệm.** Thuê một công ty outsource, khi hệ thống sập có hợp đồng, có điều khoản bảo hành, có người để gọi. AI không ký hợp đồng. Khi dữ liệu khách hàng bị lộ, khi tính sai tiền, khi hệ thống sập đúng ngày khuyến mãi, người chịu trách nhiệm là bạn. Và lúc đó, bạn cần một ai đó hiểu hệ thống đủ để sửa, chứ không chỉ đủ để mô tả.
-
-**Nó làm cho thứ chưa xong trông như đã xong.** Code AI viết thường sạch sẽ, có comment, có test. Demo chạy mượt. Rất khó để người không có chuyên môn nhận ra cái gì còn thiếu. Với đội outsource tệ, dấu hiệu thường lộ sớm: trễ hạn, bug nhiều, giao tiếp kém. Với AI, mọi thứ trông hoàn hảo cho tới khi có người dùng thật.
+AI là một nhà thầu outsource cực nhanh, cực rẻ, làm việc 24/7, không bao giờ cãi. Nhưng nó mang theo **đúng những vấn đề** của outsource: làm đúng điều bạn nói chứ không phải điều bạn cần, không chịu trách nhiệm khi hệ thống hỏng, và làm cho thứ chưa xong trông như đã xong. Mình phân tích kỹ ba điểm này, cùng chuyện mô hình kinh doanh phần mềm sẽ thay đổi thế nào, trong bài [Khi AI trở thành công ty outsource](/blog/ai-la-outsource-tuong-lai/).
 
 ## Vậy ai sẽ cần trong thế giới "không ai code"?
 
