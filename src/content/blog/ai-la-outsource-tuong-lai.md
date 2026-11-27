@@ -2,7 +2,6 @@
 title: "Khi AI trở thành công ty outsource: mô hình kinh doanh phần mềm sẽ thay đổi thế nào?"
 description: Mô hình bán giờ công đang mất dần lý do tồn tại khi AI làm phần gõ code nhanh gấp nhiều lần. Công ty có còn cần thuê outsource, hay chỉ cần một người cùng AI làm hết? Những gì đang chết, những mô hình có khả năng lên, và ý nghĩa với ngành outsource Việt Nam.
 pubDate: 2026-11-27
-draft: true
 tags: [thinking, ai, career]
 ---
 

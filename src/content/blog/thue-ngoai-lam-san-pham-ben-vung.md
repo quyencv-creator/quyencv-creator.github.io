@@ -2,7 +2,6 @@
 title: "Thuê ngoài làm sản phẩm: làm sao để nhiều năm sau, dữ liệu lớn, người dùng đông vẫn chạy ổn?"
 description: Không nhà thầu nào đảm bảo được "không lỗi". Thứ bạn mua được là một mức chất lượng đo được, một cam kết vận hành, và quyền tự do đổi nhà thầu. Checklist cho người làm kinh doanh khi chọn và ký hợp đồng với đơn vị làm sản phẩm.
 pubDate: 2026-11-27
-draft: true
 tags: [thinking, career, backend]
 ---
 
