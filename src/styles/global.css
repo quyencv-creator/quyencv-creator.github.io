@@ -158,8 +158,19 @@ main > section + section { margin-top: 3rem; }
   clip-path: polygon(28% 0, 72% 0, 100% 24%, 100% 100%, 0 100%, 0 24%);
   border-radius: 0 0 3px 3px; }
 .posts .thumb:hover { text-decoration: none; }
+/* Rê chuột vào bài: thẻ lắc mạnh hơn một nhịp rồi tắt dần, như vừa bị chạm vào. */
+.posts li:hover .thumb { animation: tag-jiggle .9s ease-out 1; }
 @keyframes tag-sway {
   0%, 100% { transform: rotate(-4deg); }
   50% { transform: rotate(4deg); }
 }
-@media (prefers-reduced-motion: reduce) { .posts .thumb { animation: none; } }
+@keyframes tag-jiggle {
+  0% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(7deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(2deg); }
+  100% { transform: rotate(0); }
+}
+@media (prefers-reduced-motion: reduce) { .posts .thumb, .posts li:hover .thumb { animation: none; } }
