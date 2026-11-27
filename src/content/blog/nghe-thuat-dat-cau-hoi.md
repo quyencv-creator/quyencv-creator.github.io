@@ -1,7 +1,7 @@
 ---
 title: "Nghệ thuật đặt câu hỏi: khi ai cũng có lời giải, thứ hiếm là vấn đề"
 description: AI suy luận và trả lời ngày càng giỏi, nên lời giải không còn là lợi thế. Thứ hiếm bây giờ là câu hỏi đúng. Nhưng câu hỏi từ đâu ra? Không phải từ một khung giờ ngồi nghĩ, mà từ sự khó chịu, từ việc ở đủ gần vấn đề, và từ thói quen hỏi tiếp khi người khác đã dừng.
-pubDate: 2026-11-25
+pubDate: 2026-08-25
 tags: [thinking, ai]
 ---
 

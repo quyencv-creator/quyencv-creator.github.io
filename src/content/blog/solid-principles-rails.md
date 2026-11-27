@@ -1,7 +1,7 @@
 ---
 title: "SOLID là gì? Giải thích dễ hiểu kèm ví dụ trong Rails"
 description: Năm nguyên tắc SOLID giải thích bằng ví dụ đời thường, mỗi nguyên tắc có một ví dụ Rails "trước và sau khi sửa", và khi nào không nên áp dụng quá mức.
-pubDate: 2026-11-20
+pubDate: 2026-02-03
 tags: [ruby, rails, solid, design-principles]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Load test Rails API bằng k6: vì sao dân Rails hay bỏ qua, và cách setup chuẩn cho mọi dự án"
 description: Cộng đồng Rails viết test rất nhiều nhưng hiếm khi load test. Bài viết phân tích lý do, rồi đưa ra một bộ setup k6 dùng lại được cho bất kỳ Rails API nào - chạy Rails ở production mode bằng Docker Compose, seed dữ liệu, xác thực, các kịch bản smoke/load/stress/spike/soak, ngưỡng pass/fail và chạy trong CI.
-pubDate: 2026-11-25
+pubDate: 2026-08-03
 tags: [rails, ruby, performance, backend, devops]
 ---
 

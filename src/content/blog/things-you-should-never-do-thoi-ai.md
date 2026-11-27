@@ -1,7 +1,7 @@
 ---
 title: "\"Things You Should Never Do\" có còn đúng khi AI viết lại được mọi thứ?"
 description: Năm 2000, Joel Spolsky gọi viết lại từ đầu là sai lầm chiến lược tệ nhất của một công ty phần mềm. Hơn hai mươi năm sau, AI viết lại cả hệ thống trong vài tháng. Vài suy ngẫm về việc cái gì đã đổi, cái gì vẫn nguyên, và vì sao viết lại càng rẻ thì phần đắt nhất càng lộ rõ.
-pubDate: 2026-11-26
+pubDate: 2026-10-07
 tags: [thinking, ai, architecture]
 ---
 

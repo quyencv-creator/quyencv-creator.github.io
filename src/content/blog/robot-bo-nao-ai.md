@@ -1,7 +1,7 @@
 ---
 title: "Robot có bộ não là AI: điều gì xảy ra, nó làm được gì, và con người đứng ở đâu"
 description: "Khi mô hình AI được gắn vào thân robot: robot học thế nào, làm được và chưa làm được gì, rủi ro nằm ở đâu, và vai trò của con người chuyển từ làm sang giám sát, dạy và chịu trách nhiệm."
-pubDate: 2026-11-22
+pubDate: 2026-06-21
 tags: [ai, robotics, thinking]
 ---
 

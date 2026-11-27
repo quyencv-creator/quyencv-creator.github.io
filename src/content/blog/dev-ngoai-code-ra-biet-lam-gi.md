@@ -1,7 +1,7 @@
 ---
 title: Dev ngoài code ra biết làm cái khỉ gì?
 description: Cài Windows, sửa máy in, vác bình nước, cấu hình router, tự động hoá việc lặp lại… Danh sách những kỹ năng "ngoài lề" chứng minh dev cũng có ích, chứ không chỉ ngồi gõ phím.
-pubDate: 2026-11-21
+pubDate: 2026-03-11
 tags: [thinking]
 ---
 

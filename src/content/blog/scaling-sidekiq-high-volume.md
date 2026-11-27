@@ -1,7 +1,7 @@
 ---
 title: "Scaling Sidekiq cho ứng dụng high-volume: deploy nhiều Docker instance và đo xem nghẽn ở đâu"
 description: "Thiết kế queue, concurrency, connection pool, deploy Sidekiq bằng Docker Compose/Kubernetes để scale ngang, và đo latency, throughput, saturation để biết đang nghẽn ở Redis, DB hay CPU."
-pubDate: 2026-11-22
+pubDate: 2026-05-23
 tags: [ruby, rails, sidekiq, docker, redis]
 ---
 

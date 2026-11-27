@@ -1,7 +1,7 @@
 ---
 title: "Modular monolith cho ecommerce + logistics: lựa chọn của team 1–2 người + AI (Go)"
 description: "Vì sao team 1–2 dev dùng AI nên chọn modular monolith: so sánh chi phí với microservices, thiết kế module ecommerce + giao hàng, chia database theo schema, outbox, và khi nào mới tách service. Code Go."
-pubDate: 2026-11-22
+pubDate: 2026-05-30
 tags: [golang, architecture, backend, database]
 ---
 

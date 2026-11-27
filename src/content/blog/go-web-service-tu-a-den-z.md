@@ -1,7 +1,7 @@
 ---
 title: "Go web service từ A đến Z: import, build, cấu trúc và vòng đời một request"
 description: Cách Go import package, build thành một file binary, tổ chức project và đi theo một HTTP request từ main → handler → service → repo, kèm DB pool, Redis, AWS SDK.
-pubDate: 2026-11-20
+pubDate: 2026-01-12
 tags: [golang, architecture, backend]
 ---
 

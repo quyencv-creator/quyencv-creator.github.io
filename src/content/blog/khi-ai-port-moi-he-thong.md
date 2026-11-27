@@ -1,7 +1,7 @@
 ---
 title: "Khi một ngày ai cũng có thể port mọi hệ thống sang ngôn ngữ khác"
 description: AI dịch code từ Ruby sang Go, từ PHP sang Java ngày càng giỏi. Nhưng cú pháp chưa bao giờ là phần khó của việc port. Phần khó là hành vi, cái mà người dùng đang phụ thuộc vào mà không ai ghi lại. Khi việc dịch code gần như miễn phí, cái gì còn đắt, và chọn ngôn ngữ còn quan trọng không?
-pubDate: 2026-11-26
+pubDate: 2026-09-30
 tags: [thinking, ai, architecture]
 ---
 

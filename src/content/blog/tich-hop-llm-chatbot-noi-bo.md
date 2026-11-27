@@ -1,7 +1,7 @@
 ---
 title: "Tích hợp LLM vào hệ thống: chatbot nội bộ và những thứ không ai nói trước"
 description: Dựng chatbot nội bộ bằng RAG thì dễ, làm cho nó an toàn, rẻ và chịu tải mới khó. Phân quyền trước LLM, giới hạn token, timeout và fallback, streaming kèm trích nguồn, cache nhiều tầng có tính quyền, kèm ví dụ FastAPI + Redis.
-pubDate: 2026-11-21
+pubDate: 2026-03-18
 tags: [architecture, backend, ai, python]
 ---
 

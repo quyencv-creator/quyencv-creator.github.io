@@ -1,7 +1,7 @@
 ---
 title: "3 điều quan trọng khi xây một hệ thống: đúng dữ liệu, phục hồi được, chịu được tải"
 description: "Data correctness, system reliability, performance at scale qua một app Rails đặt phòng khách sạn: mỗi điều nằm ở đâu trong code và kiểm tra thế nào."
-pubDate: 2026-11-22
+pubDate: 2026-06-13
 tags: [ruby, rails, architecture, backend]
 ---
 

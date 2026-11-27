@@ -1,7 +1,7 @@
 ---
 title: "Những thứ khó hiểu trong Go (phần 3): con trỏ và những vấn đề của con trỏ"
 description: Go truyền mọi thứ bằng giá trị, vậy khi nào cần con trỏ? Receiver con trỏ và receiver giá trị, method set và interface, nil receiver, copy struct chứa Mutex, escape analysis, con trỏ có thật sự nhanh hơn không, và *string cho field tuỳ chọn.
-pubDate: 2026-11-25
+pubDate: 2026-07-20
 tags: [golang]
 ---
 

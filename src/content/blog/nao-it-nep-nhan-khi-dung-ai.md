@@ -1,7 +1,7 @@
 ---
 title: Não tôi ít nếp nhăn hơn khi dùng AI
 description: Hỏi AI thì nhanh, nhưng hỏi xong quên ngay, đến lúc cần ra quyết định lại phải hỏi lại từ đầu. Ba thói quen nhỏ để AI làm mình giỏi lên chứ không làm não mình phẳng đi.
-pubDate: 2026-11-21
+pubDate: 2026-03-04
 tags: [thinking]
 ---
 

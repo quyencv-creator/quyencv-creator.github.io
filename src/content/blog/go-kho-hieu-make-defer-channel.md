@@ -1,7 +1,7 @@
 ---
 title: "Những thứ khó hiểu trong Go (phần 1): make, defer, channel và select"
 description: make khác new thế nào, defer chạy lúc nào và tính tham số lúc nào, chan<- với <-chan, channel nil và channel đã close hành xử ra sao, select chọn nhánh theo luật gì. Mỗi mục có code chạy thật và output.
-pubDate: 2026-11-25
+pubDate: 2026-07-05
 tags: [golang]
 ---
 

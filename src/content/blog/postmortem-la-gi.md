@@ -1,7 +1,7 @@
 ---
 title: "Postmortem là gì, tại sao dev nên đọc, và đọc ở đâu"
 description: Postmortem là bản phân tích sau sự cố, viết ra để học chứ không để đổ lỗi. Đọc postmortem của người khác là cách rẻ nhất để có kinh nghiệm xử lý sự cố mà không phải tự làm sập production. Kèm nguồn đọc công khai, cách đọc cho hiệu quả, và cách tự viết postmortem khi chính mình gặp sự cố.
-pubDate: 2026-11-26
+pubDate: 2026-09-16
 tags: [thinking, devops, backend]
 ---
 

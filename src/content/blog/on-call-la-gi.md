@@ -1,7 +1,7 @@
 ---
 title: "On-call là gì: trực sự cố, làm gì khi bị gọi lúc 3 giờ sáng, và làm sao để không kiệt sức"
 description: On-call là việc luân phiên chịu trách nhiệm cho hệ thống ngoài giờ làm việc. Bài viết giải thích cách tổ chức một lịch on-call, phải làm gì khi nhận alert, alert thế nào là tốt, và những dấu hiệu cho thấy on-call của team đang có vấn đề.
-pubDate: 2026-11-26
+pubDate: 2026-09-23
 tags: [devops, backend, career]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "FastAPI từ A đến Z: cấu trúc dự án và vòng đời một request"
 description: Dựng một dự án FastAPI thực tế với PostgreSQL và Redis, rồi đi theo một request từ lúc Uvicorn nhận tới lúc trả JSON, để thấy rõ thứ gì tạo một lần khi khởi động, thứ gì tạo mỗi request.
-pubDate: 2026-11-21
+pubDate: 2026-02-25
 tags: [python, architecture, backend]
 ---
 

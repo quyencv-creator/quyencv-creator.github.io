@@ -1,7 +1,7 @@
 ---
 title: "Tư duy hệ thống: sức mạnh của người làm phần mềm thời AI"
 description: AI tối ưu từng mảnh rất giỏi, nhưng hệ thống hỏng ở chỗ các mảnh tương tác với nhau. Vòng phản hồi, độ trễ, điểm nghẽn di chuyển, hệ quả bậc hai, và cách tập nhìn hệ thống thay vì nhìn từng dòng code.
-pubDate: 2026-11-25
+pubDate: 2026-09-01
 tags: [thinking, ai, architecture]
 ---
 

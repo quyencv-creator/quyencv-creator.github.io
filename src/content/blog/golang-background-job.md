@@ -1,7 +1,7 @@
 ---
 title: "Background job trong Go: goroutine, worker pool, Asynq và job chạy hàng giờ"
 description: Các cách chạy background job trong Go, khi nào dùng goroutine, khi nào cần queue như Asynq, cách theo dõi trạng thái, retry, dead queue và xử lý job export kéo dài cả tiếng.
-pubDate: 2026-11-20
+pubDate: 2026-01-27
 tags: [golang, backend, background-job, asynq]
 ---
 

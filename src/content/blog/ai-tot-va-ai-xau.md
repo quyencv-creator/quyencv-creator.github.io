@@ -1,7 +1,7 @@
 ---
 title: AI tốt và AI xấu
 description: AI giúp mình học nhanh hơn bao giờ hết, nhưng cũng dễ khiến mình thôi tự suy nghĩ. Khi ai cũng có cùng một con AI, giá trị của mình nằm ở đâu?
-pubDate: 2026-11-20
+pubDate: 2026-02-17
 tags: [thinking]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Có nên cache kết quả tính toán nghiệp vụ? Ví dụ cart total khi user reload liên tục"
 description: "Cart total có khuyến mãi, voucher, phí ship, hạng thành viên: cache hay tính lại mỗi lần? Đo trước, cache đầu vào thay vì kết quả, cache theo fingerprint để khỏi invalidate, và luôn tính lại khi checkout. Code Go."
-pubDate: 2026-11-22
+pubDate: 2026-06-06
 tags: [golang, cache, backend, ecommerce]
 ---
 

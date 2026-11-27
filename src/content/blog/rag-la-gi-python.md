@@ -1,7 +1,7 @@
 ---
 title: "RAG là gì? Giải thích bằng Python"
 description: RAG (Retrieval-Augmented Generation) cho LLM tìm tài liệu liên quan trước rồi mới trả lời. Bài viết đi từ khái niệm, kiến trúc hai luồng, code Python retrieval + generation, tới so sánh với fine-tuning và các vấn đề khi đưa vào backend thật.
-pubDate: 2026-11-25
+pubDate: 2026-06-28
 tags: [ai, python, backend]
 ---
 

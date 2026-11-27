@@ -1,7 +1,7 @@
 ---
 title: "Khi AI viết code mà không ai đọc nổi: 8 kịch bản cho nghề dev và cuộc đua token"
 description: Code không ai hiểu là code lỗi, dù AI viết nhanh đến đâu. Tám kịch bản cho 5–10 năm tới, từ AI làm junior siêu tốc đến cuộc đua token, kèm dấu hiệu để tự quan sát và việc dev nên làm.
-pubDate: 2026-11-25
+pubDate: 2026-08-18
 tags: [ai, thinking, career]
 ---
 

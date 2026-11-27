@@ -1,7 +1,7 @@
 ---
 title: "SLI, SLO, SLA và error budget: đặt SLO đầu tiên cho service của bạn"
 description: "Phân biệt SLI, SLO, SLA, error budget qua một API checkout thật: chọn SLI, đặt SLO, viết PromQL và alert theo burn rate."
-pubDate: 2026-11-21
+pubDate: 2026-05-01
 tags: [sre, observability, backend]
 ---
 

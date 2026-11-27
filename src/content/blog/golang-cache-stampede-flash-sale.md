@@ -1,7 +1,7 @@
 ---
 title: "Cache stampede trong flash sale với Go: 100 sản phẩm cùng hết hạn, làm sao để database không bị dội cùng lúc?"
 description: "Nạp cache giá và tồn kho cho 100 sản phẩm flash sale cùng một lúc thì chúng cũng hết hạn cùng một lúc, và hàng nghìn request ập vào database. Đo bằng code Go chạy thật với Redis: cache-aside thông thường, TTL jitter, singleflight, soft TTL kèm làm mới nền có lock, làm mới chủ động cả lô, và vì sao tồn kho không nên cache theo kiểu này."
-pubDate: 2026-11-27
+pubDate: 2026-11-20
 tags: [golang, redis, backend, performance]
 ---
 

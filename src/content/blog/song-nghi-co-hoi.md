@@ -1,7 +1,7 @@
 ---
 title: "Sống, Nghĩ, Cơ hội"
 description: "Hôm nay có internet, mai có smartphone, mốt có AI, năm sau có gì không ai biết trước. Thứ duy nhất chắc chắn là sự thay đổi. Mục tiêu thì vẫn vậy: sống, học, và tìm cơ hội để tồn tại."
-pubDate: 2026-11-21
+pubDate: 2026-04-24
 tags: [thinking]
 ---
 

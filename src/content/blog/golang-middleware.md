@@ -1,7 +1,7 @@
 ---
 title: "Middleware trong Go: cách viết, cách chạy và 3 ví dụ thực tế"
 description: Middleware trong Go là gì, chạy theo thứ tự nào, nên làm gì ở tầng middleware, kèm ví dụ logging, authentication và phân quyền theo role.
-pubDate: 2026-11-20
+pubDate: 2026-01-19
 tags: [golang, backend, middleware]
 ---
 

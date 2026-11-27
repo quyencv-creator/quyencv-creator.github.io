@@ -1,7 +1,7 @@
 ---
 title: "Những thứ khó hiểu trong Go (phần 2): bẫy slice, map, interface nil và shadowing"
 description: append lúc ghi đè dữ liệu slice khác lúc không, map không an toàn khi chạy đồng thời, error nil mà vẫn khác nil, := che mất biến bên ngoài, biến vòng lặp trước và sau Go 1.22, struct{} và iota. Mỗi mục có code chạy thật và output.
-pubDate: 2026-11-25
+pubDate: 2026-07-12
 tags: [golang]
 ---
 

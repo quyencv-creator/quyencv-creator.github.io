@@ -1,7 +1,7 @@
 ---
 title: "Một năm nữa không ai code, không ai mở IDE, giao hết cho AI: người kinh doanh chỉ cần kết quả?"
 description: Câu "một năm nữa không ai code nữa" đúng một nửa. Gõ code đang biến mất thật. Nhưng "chỉ cần kết quả" là câu mà ngành outsource đã nghe suốt hai mươi năm, và nó chưa bao giờ đơn giản. Ai định nghĩa kết quả, ai nghiệm thu, và ai chịu trách nhiệm khi kết quả sai?
-pubDate: 2026-11-27
+pubDate: 2026-10-15
 tags: [thinking, ai, career]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Context trong Go: vì sao hàm nào cũng phải nhận ctx?"
 description: Gọi hàm mà không truyền ctx thì sao? Thử cho hàm treo, cho query PostgreSQL mồ côi giữ lock khi server tắt, cho job export bị dừng giữa chừng. Từ đó hiểu context đơn giản nhất có thể, và vì sao Ruby không cần thứ này.
-pubDate: 2026-11-21
+pubDate: 2026-04-02
 tags: [golang, concurrency, backend]
 ---
 
