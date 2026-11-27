@@ -10,6 +10,8 @@ interface Props {
   type?: 'website' | 'article';
 }
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, type = 'website' } = Astro.props;
+const path = Astro.url.pathname;
+const active = (prefix: string) => path.startsWith(url(prefix));
 const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, Astro.site).href;
 ---
 <!doctype html>
@@ -48,18 +50,51 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
     )}
   </head>
   <body>
-    <header>
-      <a class="brand" href={url('/')}>{SITE_TITLE}</a>
-      <nav>
-        <a href={url('/posts/')}>Bài viết</a>
-        {LANGUAGE_TAGS.map(({ tag, label }) => <a href={url(`/tags/${tag}/`)}>{label}</a>)}
-        <a href={url('/tags/')}>Tag</a>
-        <a href={url('/services/')}>Dịch vụ</a>
-        <a href={url('/contact/')}>Liên hệ</a>
-        <a href={url('/about/')}>Giới thiệu</a>
-        <a href={url('/rss.xml')}>RSS</a>
-      </nav>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href={url('/')} aria-label={`${SITE_TITLE}, trang chủ`}>
+          <span class="brand-mark" aria-hidden="true">Q</span>
+          <span class="brand-name">{SITE_TITLE}</span>
+        </a>
+        <nav class="site-nav" aria-label="Điều hướng chính">
+          <a href={url('/posts/')} aria-current={active('/posts/') || active('/blog/') ? 'page' : undefined}>Bài viết</a>
+          <details class="dropdown">
+            <summary aria-current={active('/tags/') ? 'page' : undefined}>Chủ đề</summary>
+            <div class="dropdown-panel">
+              {LANGUAGE_TAGS.map(({ tag, label }) => <a href={url(`/tags/${tag}/`)}>{label}</a>)}
+              <a class="all" href={url('/tags/')}>Tất cả chủ đề</a>
+            </div>
+          </details>
+          <a href={url('/services/')} aria-current={active('/services/') ? 'page' : undefined}>Dịch vụ</a>
+          <a href={url('/about/')} aria-current={active('/about/') ? 'page' : undefined}>Giới thiệu</a>
+          <a class="rss" href={url('/rss.xml')} title="RSS" aria-label="RSS">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M5 3a16 16 0 0 1 16 16h-3A13 13 0 0 0 5 6V3zm0 6a10 10 0 0 1 10 10h-3a7 7 0 0 0-7-7V9zm2 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>
+          </a>
+          <a class="nav-cta" href={url('/contact/')}>Liên hệ</a>
+        </nav>
+        <details class="mobile-menu">
+          <summary aria-label="Mở menu"><span></span><span></span><span></span></summary>
+          <div class="mobile-panel">
+            <a href={url('/posts/')}>Bài viết</a>
+            {LANGUAGE_TAGS.map(({ tag, label }) => <a class="sub" href={url(`/tags/${tag}/`)}>{label}</a>)}
+            <a class="sub" href={url('/tags/')}>Tất cả chủ đề</a>
+            <a href={url('/services/')}>Dịch vụ</a>
+            <a href={url('/about/')}>Giới thiệu</a>
+            <a href={url('/rss.xml')}>RSS</a>
+            <a class="nav-cta" href={url('/contact/')}>Liên hệ</a>
+          </div>
+        </details>
+      </div>
     </header>
+    <script is:inline>
+      // Đóng dropdown khi bấm ra ngoài hoặc nhấn Esc.
+      document.addEventListener('click', (e) => {
+        document.querySelectorAll('.site-header details[open]').forEach((d) => { if (!d.contains(e.target)) d.open = false; });
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') document.querySelectorAll('.site-header details[open]').forEach((d) => (d.open = false));
+      });
+    </script>
     <main><slot /></main>
     <footer>© {new Date().getFullYear()} {SITE_TITLE}</footer>
   </body>
