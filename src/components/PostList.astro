@@ -5,11 +5,13 @@ const { posts } = Astro.props;
 ---
 <ul class="posts">
   {posts.map((p) => {
-    const { from, to } = tagColors(p.data.tags[0] ?? '');
+    const tag = p.data.tags[0] ?? '';
+    const { from, to } = tagColors(tag);
+    const letter = (tag[0] ?? '•').toUpperCase();
     const href = url(`/blog/${p.id}/`);
     return (
       <li>
-        <a class="thumb" href={href} tabindex="-1" aria-hidden="true" style={`--from: ${from}; --to: ${to}`}></a>
+        <a class="thumb" href={href} tabindex="-1" aria-hidden="true" title={tag ? `#${tag}` : undefined} style={`--from: ${from}; --to: ${to}`}><span class="hang-tag">{letter}</span></a>
         <div class="post-body">
           <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
           <a href={href}>{p.data.title}</a>

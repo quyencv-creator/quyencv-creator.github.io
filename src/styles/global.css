@@ -141,17 +141,25 @@ main > section + section { margin-top: 3rem; }
 }
 
 /* post list: chấm tròn màu theo tag đầu tiên, đập như nhịp tim */
-.posts li { display: grid; grid-template-columns: 1.5rem 1fr; gap: .75rem; align-items: center; }
-.posts .thumb { justify-self: center; width: .75rem; height: .75rem; border-radius: 50%;
-  background: linear-gradient(135deg, var(--from), var(--to));
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--from) 60%, transparent);
-  animation: heartbeat 1.6s ease-in-out infinite; }
-.posts li:nth-child(odd) .thumb { animation-delay: -.8s; } /* lệch nhịp cho đỡ đều như máy */
+.posts li { display: grid; grid-template-columns: 2.25rem 1fr; gap: .75rem; align-items: center; }
 .posts .post-body { min-width: 0; }
-@keyframes heartbeat {
-  0%, 40%, 100% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--from) 60%, transparent); }
-  10% { transform: scale(1.35); }
-  20% { transform: scale(1.05); }
-  30% { transform: scale(1.3); box-shadow: 0 0 0 .45rem transparent; }
+/* Thẻ treo kiểu tag quần áo: dây treo + thân thẻ vát góc + lỗ xỏ dây, màu theo tag đầu tiên. */
+.posts .thumb { position: relative; justify-self: center; display: block; width: 1.75rem; height: 2.6rem;
+  padding-top: .45rem; text-decoration: none; transform-origin: 50% 0;
+  animation: tag-sway 3.2s ease-in-out infinite; }
+.posts li:nth-child(odd) .thumb { animation-delay: -1.6s; } /* lệch nhịp cho đỡ đều như máy */
+.posts .thumb::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: .7rem;
+  background: var(--muted); opacity: .6; transform: translateX(-50%); }
+.posts .hang-tag { display: flex; align-items: flex-end; justify-content: center; width: 100%; height: 100%;
+  padding-bottom: .3rem; color: #fff; font-size: .9rem; font-weight: 600; line-height: 1;
+  background:
+    radial-gradient(circle at 50% .42rem, var(--bg) .16rem, transparent .17rem),
+    linear-gradient(160deg, var(--from), var(--to));
+  clip-path: polygon(28% 0, 72% 0, 100% 24%, 100% 100%, 0 100%, 0 24%);
+  border-radius: 0 0 3px 3px; }
+.posts .thumb:hover { text-decoration: none; }
+@keyframes tag-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
 }
 @media (prefers-reduced-motion: reduce) { .posts .thumb { animation: none; } }
