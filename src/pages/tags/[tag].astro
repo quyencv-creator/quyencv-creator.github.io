@@ -1,8 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
-import { getPosts } from '../../utils';
-import { LANGUAGE_TAGS } from '../../consts';
+import { getPosts, url } from '../../utils';
+import { LANGUAGE_TAGS, TAG_DESCRIPTIONS, tagLabel } from '../../consts';
+import { tagColors } from '../../cover';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -11,8 +12,23 @@ export async function getStaticPaths() {
 }
 const { tag } = Astro.params;
 const { posts } = Astro.props;
+const label = tagLabel(tag);
+const description = TAG_DESCRIPTIONS[tag];
+const { from, to } = tagColors(tag);
 ---
-<Base title={`#${tag}`}>
-  <h1>#{tag}</h1>
+<Base title={label} description={description ?? `Các bài viết về ${label}.`}>
+  <section class="topic-hero" style={`--from: ${from}; --to: ${to}`}>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={url('/tags/')}>Chủ đề</a><span aria-hidden="true">/</span><span>{label}</span>
+    </nav>
+    <div class="topic-head">
+      <span class="topic-badge" aria-hidden="true">{label.charAt(0).toUpperCase()}</span>
+      <div>
+        <h1>{label}</h1>
+        <p class="topic-meta">{posts.length > 0 ? `${posts.length} bài viết` : 'Chưa có bài viết'} · <span class="topic-slug">#{tag}</span></p>
+      </div>
+    </div>
+    {description && <p class="topic-desc">{description}</p>}
+  </section>
   {posts.length > 0 ? <PostList posts={posts} /> : <p class="lead">Sắp có bài viết.</p>}
 </Base>

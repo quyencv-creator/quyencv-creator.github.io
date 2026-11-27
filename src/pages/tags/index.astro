@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getPosts, url } from '../../utils';
-import { LANGUAGE_TAGS } from '../../consts';
+import { tagLabel } from '../../consts';
 import { tagColors } from '../../cover';
 
 const posts = await getPosts();
@@ -11,11 +11,10 @@ posts.flatMap((p) => p.data.tags).forEach((t) => counts.set(t, (counts.get(t) ??
 const max = Math.max(1, ...counts.values());
 // Cạnh ô (1–3 ô lưới) tỉ lệ với căn bậc hai số bài → diện tích ô tỉ lệ với số bài.
 const side = (n: number) => Math.min(3, Math.max(1, Math.round(Math.sqrt(n / max) * 3)));
-const label = (t: string) => LANGUAGE_TAGS.find((l) => l.tag === t)?.label ?? t;
 
 const tiles = [...counts]
   .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-  .map(([tag, n]) => ({ tag, n, label: label(tag), size: side(n), ...tagColors(tag) }));
+  .map(([tag, n]) => ({ tag, n, label: tagLabel(tag), size: side(n), ...tagColors(tag) }));
 ---
 <Base title="Tag" description={`${tiles.length} chủ đề, ${posts.length} bài viết.`}>
   <h1>Tag</h1>
