@@ -1,6 +1,6 @@
 ---
 title: "Ngân hàng muốn tăng tốc bằng AI: làm sao để nhân viên không bê cả source code cho AI bên ngoài?"
-description: Cấm AI thì nhân viên dùng lén bằng tài khoản cá nhân, thả cửa thì source code và dữ liệu khách hàng ra ngoài. Cách các tổ chức tài chính có thể vừa dùng AI vừa kiểm soát được: cung cấp con đường chính thức tốt hơn con đường lén, phân loại dữ liệu, cổng AI tập trung, kiểm soát agent, và đặt luật rõ ràng cho con người.
+description: "Cấm AI thì nhân viên dùng lén bằng tài khoản cá nhân, thả cửa thì source code và dữ liệu khách hàng ra ngoài. Cách các tổ chức tài chính có thể vừa dùng AI vừa kiểm soát được: cung cấp con đường chính thức tốt hơn con đường lén, phân loại dữ liệu, cổng AI tập trung, kiểm soát agent, và đặt luật rõ ràng cho con người."
 pubDate: 2026-11-27
 draft: true
 tags: [ai, security, devops]
