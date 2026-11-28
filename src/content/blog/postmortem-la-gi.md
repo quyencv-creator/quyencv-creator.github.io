@@ -251,3 +251,7 @@ Ghép tất cả lại, đây là một postmortem đầy đủ cho sự cố po
 Nếu bạn làm một mình, hoặc team không có văn hoá postmortem, vẫn nên viết, dù chỉ nửa trang trong một file markdown riêng. Bạn sẽ ngạc nhiên vì mình quên nhanh tới mức nào. Sáu tháng sau, khi một lỗi trông quen quen quay lại, ghi chép đó sẽ cứu bạn hàng giờ.
 
 Sau một năm, tập postmortem đó sẽ là tài liệu giá trị nhất về hệ thống của bạn, giá trị hơn mọi sơ đồ kiến trúc, vì nó ghi lại hệ thống **thật sự** hành xử thế nào, chứ không phải hành xử thế nào trên giấy.
+
+---
+
+**Đọc thêm:** series [Tự dựng dịch vụ status page](/blog/status-page-1-vi-sao-can/), về cách giao tiếp với khách hàng khi có sự cố và tự dựng một MVP giám sát bằng Go.

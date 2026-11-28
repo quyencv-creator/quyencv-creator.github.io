@@ -221,3 +221,7 @@ Những metric đặc thù của Rails nên có, vì APM chung chung hay bỏ s�
 Go app nói nhiều về Prometheus, Grafana, OpenTelemetry vì **chúng buộc phải vậy**: không có auto-instrumentation, chạy nhiều service, và hệ sinh thái cùng nhà khiến việc lắp rất tự nhiên. Rails app ít nói vì APM đã làm hết, kiến trúc monolith ít cần trace phân tán, và mô hình multi-process khiến Prometheus kém tự nhiên hơn.
 
 Không bên nào "đúng" hơn. Câu hỏi đáng đặt ra không phải là "nên dùng công cụ gì" mà là **"khi có sự cố lúc 2 giờ sáng, mất bao lâu để biết lỗi ở đâu?"** Nếu câu trả lời là vài phút với log và APM hiện tại, bạn chưa cần thêm gì cả.
+
+---
+
+**Đọc thêm:** series [Tự dựng dịch vụ status page](/blog/status-page-1-vi-sao-can/), về cách giao tiếp với khách hàng khi có sự cố và tự dựng một MVP giám sát bằng Go.

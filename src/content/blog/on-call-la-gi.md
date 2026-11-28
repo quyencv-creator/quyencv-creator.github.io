@@ -104,3 +104,7 @@ Và nhớ rằng: không ai mong người trực lần đầu xử lý mọi th�
 On-call là nơi bạn gặp hệ thống của mình ở trạng thái thật nhất: không phải sơ đồ kiến trúc, không phải tài liệu, mà là thứ đang chạy lúc 3 giờ sáng với dữ liệu thật và người dùng thật. Nó mệt, nhưng cũng là nơi bạn học về hệ thống nhanh nhất.
 
 Một team tổ chức on-call tốt sẽ dùng mỗi lần bị gọi dậy như một khoản đầu tư: alert tốt hơn, runbook đầy đủ hơn, hệ thống ổn định hơn, để lần sau ít bị gọi hơn. Một team tổ chức on-call tệ sẽ bị gọi dậy mãi vì cùng những lý do cũ, cho tới khi người giỏi nhất nghỉ việc.
+
+---
+
+**Đọc thêm:** series [Tự dựng dịch vụ status page](/blog/status-page-1-vi-sao-can/), về cách giao tiếp với khách hàng khi có sự cố và tự dựng một MVP giám sát bằng Go.

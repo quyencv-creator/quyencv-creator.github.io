@@ -2,9 +2,10 @@
 title: "Status page (3/3): biến công cụ monitor thành dịch vụ"
 description: "Phần cuối của series tự dựng dịch vụ status page. Thị trường đã đông, bản miễn phí đã hào phóng, vậy có nên bán? Mô hình freemium theo mức dùng, ngách Việt Nam (tiếng Việt, thanh toán nội địa, Zalo, probe trong nước, hoá đơn VAT) lớn hay nhỏ, bán kèm dịch vụ tư vấn, bán cho đơn vị outsource, và những rủi ro khi thứ mình bán là độ tin cậy."
 pubDate: 2026-11-28
-draft: true
 tags: [thinking, career, devops]
 ---
+
+> **Series "Tự dựng dịch vụ status page":** [Phần 1: Vì sao cần trang status](/blog/status-page-1-vi-sao-can/) · [Phần 2: Dựng MVP bằng Go](/blog/status-page-2-mvp-go/) · **Phần 3: Biến công cụ monitor thành dịch vụ**
 
 Sau [phần 1](/blog/status-page-1-vi-sao-can/) (vì sao cần trang status) và [phần 2](/blog/status-page-2-mvp-go/) (tự dựng dịch vụ), bạn có trong tay một công cụ chạy được: giám sát vài endpoint, có trang status, có cập nhật sự cố, có thông báo cho người đăng ký. Câu hỏi tự nhiên tiếp theo: có bán được không?
 

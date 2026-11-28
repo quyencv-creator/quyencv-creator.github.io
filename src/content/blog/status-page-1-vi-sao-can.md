@@ -2,9 +2,10 @@
 title: "Status page (1/3): vì sao cần trang status"
 description: "Phần 1 của series tự dựng dịch vụ status page. Khi hệ thống sập, việc báo cho khách biết chuyện gì đang xảy ra quan trọng gần ngang việc sửa lỗi. Trang status giải quyết gì, cách viết cập nhật sự cố cho tốt, Atlassian Statuspage, Upptime, Uptime Kuma làm gì, và vì sao trang status phải chạy tách khỏi hệ thống nó báo cáo."
 pubDate: 2026-11-28
-draft: true
 tags: [devops, backend]
 ---
+
+> **Series "Tự dựng dịch vụ status page":** **Phần 1: Vì sao cần trang status** · [Phần 2: Dựng MVP bằng Go](/blog/status-page-2-mvp-go/) · [Phần 3: Biến công cụ monitor thành dịch vụ](/blog/status-page-3-mo-hinh-kinh-doanh/)
 
 Mười giờ sáng thứ Hai, API thanh toán bắt đầu trả lỗi. Team on-call nhận alert và bắt tay điều tra.
 
