@@ -2,7 +2,6 @@
 title: "Các loại test và 3 loại quan trọng nhất trong Go project"
 description: "Unit, integration, contract, end-to-end, smoke, load, fuzz: mỗi loại test trả lời một câu hỏi khác nhau. Với một Go backend thông thường, ba loại mang lại nhiều giá trị nhất là unit test dạng bảng, test HTTP handler bằng httptest, và integration test với database thật. Code chạy thật, kèm output, coverage và một bug mà test bắt được."
 pubDate: 2026-11-28
-draft: true
 tags: [golang, backend]
 ---
 
