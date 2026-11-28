@@ -3,17 +3,34 @@ import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getPosts } from '../../utils';
-import { POSTS_PER_PAGE } from '../../consts';
+import { getPosts, url } from '../../utils';
+import { POSTS_PER_PAGE, tagLabel } from '../../consts';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getPosts();
-  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+  const counts = new Map<string, number>();
+  posts.flatMap((p) => p.data.tags).forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1));
+  const topTags = [...counts].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([t]) => t);
+  return paginate(posts, { pageSize: POSTS_PER_PAGE, props: { total: posts.length, topTags } });
 }) satisfies GetStaticPaths;
-const { page } = Astro.props;
+const { page, total, topTags } = Astro.props;
 ---
 <Base title={page.currentPage === 1 ? 'Bài viết' : `Bài viết · trang ${page.currentPage}`}>
-  <h1>Bài viết</h1>
+  <header class="list-head">
+    <p class="lp-kicker">Blog</p>
+    <h1>Bài viết</h1>
+    <p class="lead">{total} bài về backend, độ tin cậy hệ thống và nghề làm phần mềm. Code chạy thật, số đo thật.</p>
+    <form class="search-form compact" role="search" action={url('/search/')} method="get">
+      <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 0 1 6.32 12.9l5.39 5.4-1.41 1.4-5.4-5.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+      <input id="q" name="q" type="search" placeholder="Tìm bài viết..." aria-label="Tìm bài viết" />
+      <kbd>/</kbd>
+    </form>
+    <nav class="topic-chips" aria-label="Chủ đề nổi bật">
+      {topTags.map((t) => <a href={url(`/tags/${t}/`)}>{tagLabel(t)}</a>)}
+      <a class="all" href={url('/tags/')}>Tất cả chủ đề →</a>
+    </nav>
+    {page.lastPage > 1 && <p class="page-info">Trang {page.currentPage}/{page.lastPage}</p>}
+  </header>
   <PostList posts={page.data} />
   <Pagination page={page} />
 </Base>

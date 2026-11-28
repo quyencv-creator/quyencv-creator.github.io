@@ -1,7 +1,12 @@
 ---
 import { formatDate, url } from '../utils';
 import { tagColors } from '../cover';
+import { tagLabel } from '../consts';
+import { seriesInfo } from '../utils-series';
 const { posts } = Astro.props;
+
+// Thời gian đọc ước lượng: tiếng Việt tách theo âm tiết, khoảng 300 âm tiết mỗi phút, tối thiểu 1 phút.
+const readingMinutes = (body: string = '') => Math.max(1, Math.round(body.split(/\s+/).filter(Boolean).length / 300));
 ---
 <ul class="posts">
   {posts.map((p) => {
@@ -9,13 +14,22 @@ const { posts } = Astro.props;
     const { from, to } = tagColors(tag);
     const letter = (tag[0] ?? '•').toUpperCase();
     const href = url(`/blog/${p.id}/`);
+    const series = seriesInfo(p.data.series);
     return (
-      <li>
-        <a class="thumb" href={href} tabindex="-1" aria-hidden="true" title={tag ? `#${tag}` : undefined} style={`--from: ${from}; --to: ${to}`}><span class="hang-tag">{letter}</span></a>
+      <li class="post-item" style={`--from: ${from}; --to: ${to}`}>
+        <a class="thumb" href={href} tabindex="-1" aria-hidden="true" title={tag ? `#${tag}` : undefined}><span class="hang-tag">{letter}</span></a>
         <div class="post-body">
-          <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
-          <a href={href}>{p.data.title}</a>
-          <p>{p.data.description}</p>
+          <p class="post-meta">
+            <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
+            <span aria-hidden="true">·</span>
+            <span>{readingMinutes(p.body)} phút đọc</span>
+            {series && <a class="series-badge" href={url(`/series/${series.slug}/`)}>Series · Phần {p.data.seriesOrder}</a>}
+          </p>
+          <h2 class="post-title"><a class="stretched" href={href}>{p.data.title}</a></h2>
+          <p class="post-desc">{p.data.description}</p>
+          <p class="post-tags">
+            {p.data.tags.slice(0, 4).map((t) => <a href={url(`/tags/${t}/`)}>{tagLabel(t)}</a>)}
+          </p>
         </div>
       </li>
     );
