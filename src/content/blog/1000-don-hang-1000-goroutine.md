@@ -1,18 +1,13 @@
 ---
 title: "1.000 đơn hàng, có nên chạy 1.000 goroutine?"
-description: "Câu hỏi phỏng vấn Go quen thuộc: API xử lý 1.000 đơn, mỗi đơn gọi một external API. Đo bằng code chạy thật với một API giả lập chỉ chịu được 50 request đồng thời: 1.000 goroutine thẳng tay thì 95% đơn thất bại; worker pool kèm timeout, retry có kiểm soát và context thì xử lý xong cả 1.000. Giới hạn concurrency, backpressure, timeout, huỷ giữa chừng và retry, từng thứ một."
+description: "Một API xử lý 1.000 đơn hàng, mỗi đơn phải gọi một external API. Đo bằng code chạy thật với một API giả lập chỉ chịu được 50 request đồng thời: 1.000 goroutine thẳng tay thì 95% đơn thất bại; worker pool kèm timeout, retry có kiểm soát và context thì xử lý xong cả 1.000. Giới hạn concurrency, backpressure, timeout, huỷ giữa chừng và retry, từng thứ một."
 pubDate: 2026-11-28
-draft: true
 tags: [golang, backend, concurrency]
 ---
 
-Một câu hỏi rất hay gặp khi phỏng vấn Go:
+Bài toán: một API nhận một lô 1.000 đơn hàng. Với mỗi đơn, hệ thống phải gọi sang một dịch vụ bên ngoài, ví dụ lấy phí vận chuyển, tạo vận đơn, hoặc xuất hoá đơn điện tử. Đối tác có giới hạn, đôi khi lỗi, đôi khi chậm.
 
-> Bạn có một API xử lý 1.000 đơn hàng. Mỗi đơn hàng cần gọi một external API (vận chuyển, thanh toán, hoá đơn…). Bạn có chạy 1.000 goroutine cùng lúc không? Nếu không, bạn giải quyết thế nào?
-
-Câu trả lời "không, dùng worker pool" là đúng nhưng chưa đủ. Người phỏng vấn muốn nghe bạn hiểu **vì sao**, và biết những thứ đi kèm: giới hạn concurrency, backpressure, timeout, huỷ bằng context, retry có kiểm soát.
-
-Bài này trả lời bằng code Go chạy thật và số đo thật.
+Viết bằng Go thì phản xạ đầu tiên là: goroutine rẻ, cứ mỗi đơn một goroutine cho nhanh. Bài này kiểm tra phản xạ đó bằng code chạy thật, rồi đi qua từng thứ cần có để xử lý lô đơn này cho đúng: giới hạn concurrency, backpressure, timeout, huỷ bằng context và retry có kiểm soát.
 
 ## Dựng một external API "giống thật"
 
@@ -305,9 +300,7 @@ Chương trình dừng đúng sau 1 giây. 229 đơn đã xong, 40 đơn bị d�
 
 Không có context, chương trình sẽ cố gọi hết 1.000 đơn dù kết quả không còn ai cần, tốn tài nguyên của bạn lẫn của đối tác. Và quan trọng: **phải biết chính xác đơn nào đã xử lý, đơn nào chưa**, để lần chạy sau tiếp tục từ đúng chỗ.
 
-## Trả lời phỏng vấn thế nào?
-
-Nếu gặp câu hỏi này, một câu trả lời đầy đủ có thể đi theo mạch:
+## Checklist khi gọi external API hàng loạt
 
 1. **Không chạy 1.000 goroutine thẳng tay.** Goroutine rẻ, nhưng đối tác thì có giới hạn, và kết nối mạng của mình cũng vậy.
 2. **Giới hạn concurrency** bằng worker pool hoặc `errgroup.SetLimit`, với con số dựa trên giới hạn của đối tác chia cho số instance.
@@ -317,7 +310,7 @@ Nếu gặp câu hỏi này, một câu trả lời đầy đủ có thể đi t
 6. **Retry có kiểm soát:** chỉ lỗi tạm thời, có giới hạn lần, backoff có jitter, tôn trọng `Retry-After`, và chỉ với thao tác idempotent.
 7. **Xử lý đơn thất bại sau cùng:** ghi lại, đưa vào hàng đợi thử lại, có metric và cảnh báo.
 
-Nếu còn thời gian, nói thêm một bước: với 1.000 đơn trong một request HTTP, người dùng phải đợi vài giây. Trong thực tế, nên trả về ngay "đã nhận", rồi xử lý ở **job nền** và cho người dùng theo dõi tiến độ. Mình viết về cách tổ chức job nền trong bài [background job trong Go](/blog/golang-background-job/).
+Một bước nữa nên cân nhắc: với 1.000 đơn trong một request HTTP, người dùng phải đợi vài giây, và request có thể bị cắt giữa chừng bởi proxy hoặc load balancer. Thường nên trả về ngay "đã nhận", rồi xử lý ở **job nền** và cho người dùng theo dõi tiến độ. Mình viết về cách tổ chức job nền trong bài [background job trong Go](/blog/golang-background-job/).
 
 ## Ghi chú về code
 
