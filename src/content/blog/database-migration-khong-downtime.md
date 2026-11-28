@@ -1,5 +1,5 @@
 ---
-title: "Database migration không downtime: những gì thật sự khoá bảng, và cách đổi schema khi hệ thống vẫn đang chạy"
+title: "Database migration không downtime"
 description: "Một câu ALTER TABLE chạy mất 1 mili giây vẫn có thể làm treo cả hệ thống. Đo trên PostgreSQL 16 với bảng 2 triệu dòng: hàng đợi lock, lock_timeout, thêm cột, đổi kiểu, tạo index, thêm NOT NULL, backfill theo lô, và mô hình expand-contract để code cũ và mới cùng chạy được trong lúc deploy."
 pubDate: 2026-11-28
 draft: true
