@@ -56,10 +56,6 @@ const proofs = [
   },
 ].map((p) => ({ ...p, post: byId(p.id) })).filter((p) => p.post);
 
-const serviceExtra: Record<string, { outcome: string; icon: string }> = {
-  mentoring: { outcome: 'Biết rõ mình cần học gì tiếp, code được review như ở team thật, tự tin hơn khi phỏng vấn.', icon: 'mentor' },
-  'it-support': { outcome: 'Máy và môi trường làm việc chạy lại, kèm các bước để lỗi không quay lại.', icon: 'wrench' },
-};
 const orderedServices = [...services].sort((a) => (a.slug === 'mentoring' ? -1 : 1));
 ---
 <Base wide>
@@ -139,10 +135,10 @@ stock: bán <span class="ok">100</span>, còn <span class="ok">0</span>
     <div class="lp-services">
       {orderedServices.map((s) => (
         <article class="lp-service">
-          <span class={`lp-icon ${serviceExtra[s.slug]?.icon ?? 'spark'}`} aria-hidden="true"></span>
+          <span class={`lp-icon ${s.icon}`} aria-hidden="true"></span>
           <h3>{s.title}</h3>
           <p class="sum">{s.summary}</p>
-          {serviceExtra[s.slug] && <p class="outcome"><strong>Sau buổi:</strong> {serviceExtra[s.slug].outcome}</p>}
+          <p class="outcome"><strong>Sau buổi:</strong> {s.outcome}</p>
           <ul>{s.scope.slice(0, 3).map((x) => <li>{x}</li>)}</ul>
           <p class="meta">{s.duration} · {s.format.split('.')[0]}</p>
           <a class="button" href={url(`/services/${s.slug}/`)}>Xem chi tiết</a>

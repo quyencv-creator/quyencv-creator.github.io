@@ -15,8 +15,15 @@ export interface Service {
   price: string;
   duration: string;
   format: string;
+  /** Kết quả người dùng nhận được sau buổi, hiện trên trang chủ và trang dịch vụ. */
+  outcome: string;
+  /** Biểu tượng: tên lớp .lp-icon (mentor, wrench, spark, db, pulse). */
+  icon: string;
   faq: { q: string; a: string }[];
 }
+
+/** Giá hiển thị: "Contact" nghĩa là báo giá riêng. */
+export const priceLabel = (price: string) => (price.trim().toLowerCase() === 'contact' ? 'Liên hệ báo giá' : price);
 
 export const services: Service[] = [
   {
@@ -42,6 +49,8 @@ export const services: Service[] = [
     ],
     price: 'Contact',
     duration: '60 phút',
+    outcome: 'Máy và môi trường làm việc chạy lại, kèm các bước để lỗi không quay lại.',
+    icon: 'wrench',
     format: 'Google Meet hoặc Zoom, chia sẻ màn hình (có thể điều khiển từ xa nếu bạn đồng ý).',
     faq: [
       {
@@ -88,6 +97,8 @@ export const services: Service[] = [
     ],
     price: 'Contact',
     duration: '60 phút',
+    outcome: 'Biết rõ mình cần học gì tiếp, code được review như ở team thật, tự tin hơn khi phỏng vấn.',
+    icon: 'mentor',
     format: 'Google Meet, chia sẻ màn hình. Sau buổi có ghi chú tóm tắt và bài tập gợi ý.',
     faq: [
       {

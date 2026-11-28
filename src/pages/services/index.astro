@@ -1,19 +1,73 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { services } from '../../data/services';
-import { url } from '../../utils';
+import { services, BOOKING_URL, priceLabel } from '../../data/services';
+import { getPosts, url } from '../../utils';
+import { getAllSeries } from '../../utils-series';
+
+const ordered = [...services].sort((a) => (a.slug === 'mentoring' ? -1 : 1));
+const postCount = (await getPosts()).length;
+const seriesCount = (await getAllSeries()).length;
 ---
-<Base title="Dịch vụ" description="Các dịch vụ hỗ trợ online 1-1: IT support và mentor cho junior developer.">
-  <h1>Dịch vụ</h1>
-  <p class="lead">Hỗ trợ online 1-1 qua gọi video. Chọn dịch vụ để xem chi tiết và đặt lịch.</p>
-  <div class="cards">
-    {services.map((s) => (
-      <a class="card" href={url(`/services/${s.slug}/`)}>
-        <h2>{s.title}</h2>
-        <p>{s.summary}</p>
-        <p class="meta">{s.duration} · {s.price}</p>
-        <span class="more">Xem chi tiết →</span>
-      </a>
-    ))}
+<Base title="Dịch vụ" description="Mentoring 1-1 cho junior developer và hỗ trợ kỹ thuật trực tuyến qua gọi video.">
+  <header class="svc-head">
+    <p class="lp-kicker">Dịch vụ</p>
+    <h1>Làm việc 1-1, tập trung đúng vấn đề của bạn</h1>
+    <p class="lead">Gọi video, chia sẻ màn hình, giải quyết trên chính dự án hoặc máy tính của bạn. Không slide, không lý thuyết chung chung.</p>
+  </header>
+
+  <div class="svc-grid">
+    {ordered.map((s) => {
+      const booking = BOOKING_URL[s.slug];
+      return (
+        <article class="svc-card">
+          <div class="svc-card-top">
+            <span class={`lp-icon ${s.icon}`} aria-hidden="true"></span>
+            <ul class="svc-chips">
+              <li>{s.duration}</li>
+              <li>{priceLabel(s.price)}</li>
+            </ul>
+          </div>
+          <h2><a href={url(`/services/${s.slug}/`)}>{s.title}</a></h2>
+          <p class="svc-sum">{s.summary}</p>
+          <p class="svc-outcome"><strong>Sau buổi:</strong> {s.outcome}</p>
+          <p class="svc-label">Phù hợp nếu bạn là</p>
+          <ul class="checks">{s.audience.map((x) => <li>{x}</li>)}</ul>
+          <div class="svc-actions">
+            <a class="button" href={url(`/services/${s.slug}/`)}>Xem chi tiết</a>
+            {booking
+              ? <a class="button secondary" href={booking} target="_blank" rel="noopener">Đặt lịch</a>
+              : <a class="button secondary" href={url('/contact/')}>Liên hệ</a>}
+          </div>
+        </article>
+      );
+    })}
   </div>
+
+  <section class="lp-section">
+    <p class="lp-kicker">Quy trình</p>
+    <h2 class="lp-h2">Một buổi làm việc diễn ra thế nào</h2>
+    <ol class="lp-steps">
+      <li><span>1</span><div><strong>Gửi vấn đề</strong><p>Mục tiêu của buổi, link repo, CV hoặc mô tả lỗi, để buổi tập trung đúng chỗ.</p></div></li>
+      <li><span>2</span><div><strong>Buổi 1-1 qua video</strong><p>Chia sẻ màn hình, cùng chẩn đoán và giải quyết trên chính vấn đề của bạn.</p></div></li>
+      <li><span>3</span><div><strong>Ghi chú và bước tiếp theo</strong><p>Tóm tắt những gì đã làm và hướng đi tiếp, để bạn tự làm tiếp được.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="lp-section">
+    <p class="lp-kicker">Vì sao làm việc cùng mình</p>
+    <h2 class="lp-h2">Kinh nghiệm được viết ra, kiểm chứng được</h2>
+    <div class="svc-why">
+      <a href={url('/posts/')}><strong>{postCount} bài viết</strong><span>Về backend, độ tin cậy hệ thống và nghề làm phần mềm. Bạn có thể đọc trước để biết cách mình làm việc.</span></a>
+      <a href={url('/series/')}><strong>{seriesCount} series</strong><span>Đi sâu một chủ đề theo lộ trình, từ khái niệm tới code chạy thật.</span></a>
+      <a href={url('/blog/golang-cache-stampede-flash-sale/')}><strong>Code chạy thật</strong><span>Các kết luận đi kèm thí nghiệm và số đo, không chỉ lý thuyết.</span></a>
+    </div>
+  </section>
+
+  <section class="lp-final">
+    <h2>Chưa chắc dịch vụ nào phù hợp?</h2>
+    <p>Mô tả ngắn vấn đề của bạn, mình sẽ trả lời và gợi ý hướng phù hợp.</p>
+    <div class="lp-actions">
+      <a class="button lg light" href={url('/contact/')}>Gửi câu hỏi</a>
+    </div>
+  </section>
 </Base>
