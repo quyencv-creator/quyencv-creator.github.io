@@ -2,7 +2,7 @@
 title: "Viết service object tốt trong Rails: tổ chức, đặt tên, truyền phụ thuộc và test"
 description: "Khi nào cần service object, đặt tên và tổ chức thư mục, một interface duy nhất là call, trả về Result, truyền phụ thuộc qua constructor để dễ test, service gọi service thế nào (transaction, rollback lồng nhau, duck typing thay cho interface của Go), kèm ví dụ đặt hàng chạy được với test."
 pubDate: 2026-04-16
-tags: [ruby, architecture, backend]
+tags: [ruby, rails, architecture, backend]
 ---
 
 Rails có câu "fat model, skinny controller". Vài năm sau, model `Order` dài 1.500 dòng, vừa validate, vừa tính tiền, vừa gọi Stripe, vừa gửi email trong callback. Không ai dám sửa.

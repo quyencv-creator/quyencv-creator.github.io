@@ -2,7 +2,7 @@
 title: "Ruby thread: khi request của user A trả về dữ liệu của user B"
 description: Puma chạy nhiều thread trong một process, các thread dùng chung bộ nhớ. Một biến @user đặt sai chỗ là đủ để request này lấy nhầm dữ liệu của request khác khi tải nặng. Bài viết giải thích vì sao GVL không cứu được, các chỗ hay rò dữ liệu (class ivar, biến toàn cục, Thread.current trong thread pool) và cách khắc phục, kèm code chạy thật.
 pubDate: 2026-07-27
-tags: [ruby, backend]
+tags: [ruby, rails, concurrency, backend]
 ---
 
 Có một loại bug mà ai gặp rồi đều nhớ rất lâu: user A mở trang hồ sơ và thấy **tên, email, đơn hàng của user B**. Local không tái hiện được, staging cũng không. Chỉ xảy ra trên production, vào giờ cao điểm, thỉnh thoảng.

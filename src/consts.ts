@@ -2,9 +2,7 @@ export const SITE_TITLE = 'Blog của Quyền';
 export const SITE_DESCRIPTION = 'Ghi chép về lập trình, công cụ và những điều học được.';
 
 // Tag ngôn ngữ cố định: hiện trên menu và luôn có trang /tags/<tag>/ kể cả khi chưa có bài.
-// Quy ước: viết thường, không dấu; dùng "golang" (không dùng "go"); bài Rails gắn "ruby".
-// Bộ tag chính (giữ khoảng 10 tag, không tạo tag lẻ cho một bài): golang, python, ruby, ai, backend,
-// thinking, architecture, devops, database, career.
+// Quy ước: viết thường, không dấu; dùng "golang" (không dùng "go"); bài Rails gắn "ruby" (+ "rails").
 export const LANGUAGE_TAGS = [
   { tag: 'golang', label: 'Golang' },
   { tag: 'python', label: 'Python' },
@@ -32,14 +30,16 @@ export const TAG_LABELS: Record<string, string> = {
 export const TAG_DESCRIPTIONS: Record<string, string> = {
   golang: 'Go trong thực tế: concurrency, middleware, background job, cache và những cái bẫy khi lên production.',
   python: 'Python cho backend và AI: FastAPI, RAG và cách tổ chức dự án.',
-  ruby: 'Ruby và Ruby on Rails: service object, locking, xử lý đồng thời, Sidekiq và những vấn đề khi hệ thống lớn dần.',
+  ruby: 'Ruby và Rails: service object, xử lý đồng thời, Sidekiq và những vấn đề khi hệ thống lớn dần.',
+  rails: 'Ruby on Rails ở quy mô thật: locking, Sidekiq, service object, load test.',
   ai: 'Làm phần mềm trong thời AI: dùng AI thế nào cho đúng, và kỹ năng nào vẫn thuộc về con người.',
   backend: 'Thiết kế và vận hành hệ thống backend: dữ liệu, cache, hàng đợi, độ tin cậy.',
   thinking: 'Suy ngẫm về nghề: cách đặt câu hỏi, tư duy hệ thống, và nghề dev đang đổi thay ra sao.',
-  architecture: 'Kiến trúc phần mềm: modular monolith, outbox, SOLID, và những đánh đổi đằng sau mỗi quyết định.',
-  devops: 'Vận hành hệ thống: load test, observability, SLO, on-call, postmortem, bảo mật.',
+  architecture: 'Kiến trúc phần mềm và những đánh đổi đằng sau mỗi quyết định.',
+  devops: 'Vận hành hệ thống: load test, observability, on-call, postmortem.',
   career: 'Sự nghiệp của người làm phần mềm khi ngành đang thay đổi.',
-  database: 'Database và Redis: locking, transaction, cache, Lua script và những lỗi chỉ hiện ra dưới tải.',
+  redis: 'Redis trong thực tế: Lua script, cache, bảng xếp hạng, flash sale.',
+  database: 'Database: locking, transaction và những lỗi chỉ hiện ra dưới tải.',
 };
 
 export const tagLabel = (tag: string) => TAG_LABELS[tag] ?? tag.charAt(0).toUpperCase() + tag.slice(1);

@@ -2,7 +2,7 @@
 title: "Dùng goroutine lấy dữ liệu song song thay cho JOIN: nhanh hơn hay chỉ phức tạp hơn?"
 description: Lấy danh sách bài viết kèm tác giả, bình luận, lượt thích. Một câu JOIN lớn, nhiều query tuần tự, hay errgroup chạy song song rồi map theo post id? Benchmark thật trên PostgreSQL với 5 cách, và những cái bẫy của goroutine khi làm việc với database.
 pubDate: 2026-04-09
-tags: [golang, backend, database]
+tags: [golang, concurrency, database, backend]
 ---
 
 Trang feed cần hiển thị 20 bài viết, mỗi bài có: tên tác giả, 3 bình luận mới nhất, số lượt thích.

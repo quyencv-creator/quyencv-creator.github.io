@@ -2,7 +2,7 @@
 title: "12 lỗi Go hay gặp trên production: triệu chứng, cách phát hiện, cách sửa"
 description: "Goroutine leak, nil map, data race, HTTP client không timeout, defer trong vòng lặp... Mỗi lỗi kèm triệu chứng thật, công cụ phát hiện và code sửa."
 pubDate: 2026-05-15
-tags: [golang, backend, devops]
+tags: [golang, backend, production]
 ---
 
 Go dễ viết, dễ deploy, nên cũng dễ mang lỗi lên production mà không biết. Phần lớn các lỗi dưới đây **compile được, test qua được**, chỉ lộ ra khi có tải thật hoặc chạy vài ngày liền.

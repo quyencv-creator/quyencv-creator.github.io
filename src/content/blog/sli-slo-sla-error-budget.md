@@ -2,7 +2,7 @@
 title: "SLI, SLO, SLA và error budget: đặt SLO đầu tiên cho service của bạn"
 description: "Phân biệt SLI, SLO, SLA, error budget qua một API checkout thật: chọn SLI, đặt SLO, viết PromQL và alert theo burn rate."
 pubDate: 2026-05-01
-tags: [devops, backend]
+tags: [sre, observability, backend]
 ---
 
 Service của bạn có dashboard Grafana, CPU xanh, memory xanh. Vậy mà người dùng vẫn than "thanh toán hay bị lỗi". Ai đúng?

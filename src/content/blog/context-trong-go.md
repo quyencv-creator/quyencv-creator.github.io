@@ -2,7 +2,7 @@
 title: "Context trong Go: vì sao hàm nào cũng phải nhận ctx?"
 description: Gọi hàm mà không truyền ctx thì sao? Thử cho hàm treo, cho query PostgreSQL mồ côi giữ lock khi server tắt, cho job export bị dừng giữa chừng. Từ đó hiểu context đơn giản nhất có thể, và vì sao Ruby không cần thứ này.
 pubDate: 2026-04-02
-tags: [golang, backend]
+tags: [golang, concurrency, backend]
 ---
 
 Mới học Go, ai cũng thấy khó chịu: hàm nào cũng có `ctx context.Context` làm tham số đầu tiên, truyền từ trên xuống dưới như một nghi thức. Không truyền có được không?

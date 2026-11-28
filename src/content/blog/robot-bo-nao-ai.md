@@ -2,7 +2,7 @@
 title: "Robot có bộ não là AI: điều gì xảy ra, nó làm được gì, và con người đứng ở đâu"
 description: "Khi mô hình AI được gắn vào thân robot: robot học thế nào, làm được và chưa làm được gì, rủi ro nằm ở đâu, và vai trò của con người chuyển từ làm sang giám sát, dạy và chịu trách nhiệm."
 pubDate: 2026-06-21
-tags: [ai, thinking]
+tags: [ai, robotics, thinking]
 ---
 
 Vài năm trước, robot là cánh tay sơn xe trong nhà máy: lặp lại đúng một chuyển động hàng triệu lần, đặt lệch chiếc xe 5 cm là hỏng. Bây giờ có những video robot gấp quần áo, xếp bát vào máy rửa, nghe câu "dọn giúp cái bàn" rồi tự làm.
