@@ -3,6 +3,8 @@ title: "Những thứ khó hiểu trong Go (phần 2): bẫy slice, map, interfa
 description: append lúc ghi đè dữ liệu slice khác lúc không, map không an toàn khi chạy đồng thời, error nil mà vẫn khác nil, := che mất biến bên ngoài, biến vòng lặp trước và sau Go 1.22, struct{} và iota. Mỗi mục có code chạy thật và output.
 pubDate: 2026-07-12
 tags: [golang]
+series: nhung-thu-kho-hieu-trong-go
+seriesOrder: 2
 ---
 
 Phần 1 nói về [make, defer, channel và select](/blog/go-kho-hieu-make-defer-channel/). Phần này là những cái bẫy không gây lỗi biên dịch, cũng không panic, mà lặng lẽ cho ra **dữ liệu sai**. Đây là loại bug khó tìm nhất.

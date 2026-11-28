@@ -1,0 +1,32 @@
+---
+import { getSeriesPosts, seriesInfo } from '../utils-series';
+import { url } from '../utils';
+const { series, currentId } = Astro.props as { series: string; currentId: string };
+const info = seriesInfo(series);
+const posts = await getSeriesPosts(series);
+const idx = posts.findIndex((p) => p.id === currentId);
+const prev = idx > 0 ? posts[idx - 1] : undefined;
+const next = idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : undefined;
+---
+{info && posts.length > 0 && (
+  <aside class="series-nav" aria-label={`Series ${info.title}`}>
+    <p class="series-nav-head">
+      <span class="series-label">Series</span>
+      <a href={url(`/series/${info.slug}/`)}>{info.title}</a>
+      <span class="series-progress">Phần {idx + 1}/{posts.length}</span>
+    </p>
+    <ol>
+      {posts.map((p) => (
+        <li class={p.id === currentId ? 'current' : undefined}>
+          {p.id === currentId ? <span aria-current="page">{p.data.title}</span> : <a href={url(`/blog/${p.id}/`)}>{p.data.title}</a>}
+        </li>
+      ))}
+    </ol>
+    {(prev || next) && (
+      <div class="series-pager">
+        {prev ? <a href={url(`/blog/${prev.id}/`)}>← Phần trước</a> : <span />}
+        {next ? <a href={url(`/blog/${next.id}/`)}>Phần tiếp theo →</a> : <span />}
+      </div>
+    )}
+  </aside>
+)}

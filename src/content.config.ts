@@ -13,6 +13,9 @@ const blog = defineCollection({
     // Ảnh bìa tuỳ chọn: đường dẫn trong public/ (vd "/covers/abc.png") hoặc URL đầy đủ.
     // Để trống thì dùng ảnh SVG tự tạo từ title + tags.
     cover: z.string().optional(),
+    // Series: slug khai báo trong SERIES (src/consts.ts) và thứ tự bài trong series.
+    series: z.string().optional(),
+    seriesOrder: z.number().optional(),
   }),
 });
 

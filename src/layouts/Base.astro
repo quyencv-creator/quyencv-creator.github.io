@@ -65,6 +65,7 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
               <a class="all" href={url('/tags/')}>Tất cả chủ đề</a>
             </div>
           </details>
+          <a href={url('/series/')} aria-current={active('/series/') ? 'page' : undefined}>Series</a>
           <a href={url('/services/')} aria-current={active('/services/') ? 'page' : undefined}>Dịch vụ</a>
           <a href={url('/about/')} aria-current={active('/about/') ? 'page' : undefined}>Giới thiệu</a>
           <a class="rss" href={url('/rss.xml')} title="RSS" aria-label="RSS">
@@ -78,6 +79,7 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
             <a href={url('/posts/')}>Bài viết</a>
             {LANGUAGE_TAGS.map(({ tag, label }) => <a class="sub" href={url(`/tags/${tag}/`)}>{label}</a>)}
             <a class="sub" href={url('/tags/')}>Tất cả chủ đề</a>
+            <a href={url('/series/')}>Series</a>
             <a href={url('/services/')}>Dịch vụ</a>
             <a href={url('/about/')}>Giới thiệu</a>
             <a href={url('/rss.xml')}>RSS</a>

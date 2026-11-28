@@ -3,8 +3,10 @@ import Base from '../layouts/Base.astro';
 import Cover from '../components/Cover.astro';
 import { SITE_DESCRIPTION, LANGUAGE_TAGS } from '../consts';
 import { getPosts, formatDate, url } from '../utils';
+import { getAllSeries } from '../utils-series';
 
 const all = await getPosts();
+const allSeries = await getAllSeries();
 const [featured, ...rest] = all;
 const latest = rest.slice(0, 6);
 
@@ -43,6 +45,22 @@ const maxCount = Math.max(1, ...tagStats.map((t) => t.n));
         <span class="more">Đọc tiếp →</span>
         </div>
       </a>
+    </section>
+  )}
+
+  {allSeries.length > 0 && (
+    <section>
+      <h2 class="section-title">Series</h2>
+      <div class="series-list compact">
+        {allSeries.map((s) => (
+          <a class="series-card" href={url(`/series/${s.slug}/`)}>
+            <p class="series-label">Series · {s.posts.length} phần</p>
+            <h3>{s.title}</h3>
+            <p class="series-desc">{s.description}</p>
+          </a>
+        ))}
+      </div>
+      <p class="see-all"><a href={url('/series/')}>Tất cả series →</a></p>
     </section>
   )}
 

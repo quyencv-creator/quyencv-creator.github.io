@@ -3,6 +3,8 @@ title: "Những thứ khó hiểu trong Go (phần 3): con trỏ và những v�
 description: Go truyền mọi thứ bằng giá trị, vậy khi nào cần con trỏ? Receiver con trỏ và receiver giá trị, method set và interface, nil receiver, copy struct chứa Mutex, escape analysis, con trỏ có thật sự nhanh hơn không, và *string cho field tuỳ chọn.
 pubDate: 2026-07-20
 tags: [golang]
+series: nhung-thu-kho-hieu-trong-go
+seriesOrder: 3
 ---
 
 Phần cuối của loạt bài. Hai phần trước: [make, defer, channel và select](/blog/go-kho-hieu-make-defer-channel/), [bẫy slice, map, interface nil và shadowing](/blog/go-kho-hieu-bay-du-lieu/).

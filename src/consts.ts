@@ -43,3 +43,17 @@ export const TAG_DESCRIPTIONS: Record<string, string> = {
 };
 
 export const tagLabel = (tag: string) => TAG_LABELS[tag] ?? tag.charAt(0).toUpperCase() + tag.slice(1);
+
+// Các series bài viết. Bài thuộc series khai báo `series: <slug>` và `seriesOrder: <số>` trong frontmatter.
+export const SERIES = [
+  {
+    slug: 'tu-dung-status-page',
+    title: 'Tự dựng dịch vụ status page',
+    description: 'Từ vì sao cần trang status và cách giao tiếp khi có sự cố, tới dựng MVP bằng Go với code chạy thật, rồi câu hỏi có nên biến nó thành dịch vụ để bán.',
+  },
+  {
+    slug: 'nhung-thu-kho-hieu-trong-go',
+    title: 'Những thứ khó hiểu trong Go',
+    description: 'make, defer, channel và select; bẫy slice, map, interface nil và shadowing; con trỏ và những vấn đề của con trỏ. Mỗi mục có code chạy thật và output.',
+  },
+] as const;

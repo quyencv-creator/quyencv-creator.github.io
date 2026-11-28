@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getAllSeries } from '../../utils-series';
+import { url } from '../../utils';
+const all = await getAllSeries();
+---
+<Base title="Series" description="Các loạt bài viết theo chủ đề, đọc theo thứ tự.">
+  <h1>Series</h1>
+  <p class="lead">Những loạt bài đi sâu vào một chủ đề, nên đọc theo thứ tự.</p>
+  <div class="series-list">
+    {all.map((s) => (
+      <section class="series-card">
+        <p class="series-label">{s.posts.length} phần</p>
+        <h2><a href={url(`/series/${s.slug}/`)}>{s.title}</a></h2>
+        <p class="series-desc">{s.description}</p>
+        <ol>
+          {s.posts.map((p) => <li><a href={url(`/blog/${p.id}/`)}>{p.data.title}</a></li>)}
+        </ol>
+      </section>
+    ))}
+  </div>
+</Base>

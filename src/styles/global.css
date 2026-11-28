@@ -235,3 +235,32 @@ main > section + section { margin-top: 3rem; }
 .topic-meta { margin: .15rem 0 0; color: var(--muted); font-size: .85rem; }
 .topic-slug { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; }
 .topic-desc { margin: .9rem 0 0; color: var(--fg); opacity: .85; max-width: 36rem; }
+
+/* ---------- Series ---------- */
+.series-label { display: inline-block; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent); }
+.series-nav { margin: 0 0 2rem; padding: 1rem 1.2rem; border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: 10px; background: var(--code); font-size: .92rem; }
+.series-nav-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem .6rem; margin: 0 0 .5rem; }
+.series-nav-head > a { font-weight: 600; color: var(--fg); }
+.series-progress { margin-left: auto; color: var(--muted); font-size: .8rem; }
+.series-nav ol { margin: 0; padding-left: 1.3rem; }
+.series-nav li { margin: .15rem 0; }
+.series-nav li.current { font-weight: 600; }
+.series-pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: .7rem; padding-top: .6rem;
+  border-top: 1px solid var(--border); font-size: .88rem; }
+.series-list { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.series-list.compact { margin-top: 0; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.series-card { display: block; padding: 1.1rem 1.25rem; border: 1px solid var(--border); border-radius: 12px; color: var(--fg); }
+a.series-card:hover { text-decoration: none; border-color: var(--accent); }
+.series-card h2, .series-card h3 { margin: .25rem 0 .35rem; font-size: 1.15rem; }
+.series-card h2 a { color: var(--fg); }
+.series-desc { margin: 0; color: var(--muted); font-size: .92rem; }
+.series-card ol { margin: .8rem 0 0; padding-left: 1.3rem; }
+.series-parts { list-style: none; padding: 0; margin: 1.75rem 0 0; display: grid; gap: 1.1rem; }
+.series-parts li { display: grid; grid-template-columns: 2.25rem 1fr; gap: .9rem; align-items: start; }
+.series-parts .part-no { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%;
+  background: var(--accent); color: #fff; font-weight: 600; }
+.series-parts a { font-weight: 500; font-size: 1.05rem; }
+.series-parts p { margin: .2rem 0; color: var(--muted); }
+.series-parts time { font-size: .8rem; }

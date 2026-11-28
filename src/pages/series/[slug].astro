@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SERIES } from '../../consts';
+import { getSeriesPosts } from '../../utils-series';
+import { formatDate, url } from '../../utils';
+
+export async function getStaticPaths() {
+  return SERIES.map((s) => ({ params: { slug: s.slug }, props: { info: s } }));
+}
+const { info } = Astro.props;
+const posts = await getSeriesPosts(info.slug);
+---
+<Base title={info.title} description={info.description}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href={url('/series/')}>Series</a><span aria-hidden="true">/</span><span>{info.title}</span>
+  </nav>
+  <h1>{info.title}</h1>
+  <p class="lead">{info.description}</p>
+  <ol class="series-parts">
+    {posts.map((p, i) => (
+      <li>
+        <span class="part-no">{i + 1}</span>
+        <div>
+          <a href={url(`/blog/${p.id}/`)}>{p.data.title}</a>
+          <p>{p.data.description}</p>
+          <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
+        </div>
+      </li>
+    ))}
+  </ol>
+  {posts.length === 0 && <p class="lead">Sắp có bài viết.</p>}
+</Base>

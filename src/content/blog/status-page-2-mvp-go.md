@@ -3,9 +3,10 @@ title: "Status page (2/3): dựng MVP bằng Go"
 description: "Phần 2 của series tự dựng dịch vụ status page. Dựng một MVP chạy thật bằng Go và PostgreSQL: probe HTTP, TLS, TCP từ nhiều vùng, scheduler lệch pha, incident engine chỉ mở sự cố khi nhiều vùng cùng lỗi (có test), trang status tĩnh kèm API summary.json, notifier webhook và email, heartbeat giám sát chính bộ giám sát, kèm log chạy thật và một lỗi SQL phát hiện ra trong lúc chạy."
 pubDate: 2026-11-28
 tags: [golang, backend, devops]
+series: tu-dung-status-page
+seriesOrder: 2
 ---
 
-> **Series "Tự dựng dịch vụ status page":** [Phần 1: Vì sao cần trang status](/blog/status-page-1-vi-sao-can/) · **Phần 2: Dựng MVP bằng Go** · [Phần 3: Biến công cụ monitor thành dịch vụ](/blog/status-page-3-mo-hinh-kinh-doanh/)
 
 [Phần 1](/blog/status-page-1-vi-sao-can/) nói về việc vì sao cần trang status và cách giao tiếp khi có sự cố. Phần này bắt tay vào làm: một MVP dịch vụ giám sát và trang status bằng Go, đủ để thấy toàn bộ luồng chạy từ đầu tới cuối.
 

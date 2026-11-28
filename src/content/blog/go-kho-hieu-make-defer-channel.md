@@ -3,6 +3,8 @@ title: "Những thứ khó hiểu trong Go (phần 1): make, defer, channel và 
 description: make khác new thế nào, defer chạy lúc nào và tính tham số lúc nào, chan<- với <-chan, channel nil và channel đã close hành xử ra sao, select chọn nhánh theo luật gì. Mỗi mục có code chạy thật và output.
 pubDate: 2026-07-05
 tags: [golang]
+series: nhung-thu-kho-hieu-trong-go
+seriesOrder: 1
 ---
 
 Go nổi tiếng là ngôn ngữ ít cú pháp. Nhưng chính vì ít, mỗi cú pháp lại gánh nhiều ý nghĩa, và người mới (kể cả người đã viết Go vài năm) vẫn hay vấp ở cùng vài chỗ.
