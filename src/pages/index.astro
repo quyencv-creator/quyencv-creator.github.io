@@ -1,56 +1,166 @@
 ---
 import Base from '../layouts/Base.astro';
 import Cover from '../components/Cover.astro';
-import { SITE_DESCRIPTION, LANGUAGE_TAGS } from '../consts';
+import { SITE_DESCRIPTION } from '../consts';
 import { getPosts, formatDate, url } from '../utils';
 import { getAllSeries } from '../utils-series';
+import { services } from '../data/services';
 
 const all = await getPosts();
 const allSeries = await getAllSeries();
-const [featured, ...rest] = all;
-const latest = rest.slice(0, 6);
+const latest = all.slice(0, 3);
+const topicCount = new Set(all.flatMap((p) => p.data.tags)).size;
+const byId = (id: string) => all.find((p) => p.id === id);
 
-const count = (tag: string) => all.filter((p) => p.data.tags.includes(tag)).length;
-// Biểu đồ chủ đề: tag có nhiều bài nhất ở trên, thanh dài theo số bài.
-const TOP_TAGS = 10;
-const allTags = [...new Set(all.flatMap((p) => p.data.tags))];
-const label = (t: string) => LANGUAGE_TAGS.find((l) => l.tag === t)?.label ?? `#${t}`;
-const tagStats = allTags
-  .map((t) => ({ tag: t, label: label(t), n: count(t) }))
-  .sort((a, b) => b.n - a.n || a.tag.localeCompare(b.tag))
-  .slice(0, TOP_TAGS);
-const maxCount = Math.max(1, ...tagStats.map((t) => t.n));
+// Ba mảng tập trung, mỗi mảng dẫn tới vài bài tiêu biểu đang có trên blog.
+const focus = [
+  {
+    icon: 'db',
+    title: 'Backend & dữ liệu',
+    text: 'Go, Ruby on Rails, PostgreSQL, Redis. Thiết kế dữ liệu, cache, xử lý đồng thời, migration trên bảng lớn mà hệ thống vẫn chạy.',
+    posts: ['golang-cache-stampede-flash-sale', 'database-migration-khong-downtime', 'ruby-thread-du-lieu-request'],
+  },
+  {
+    icon: 'pulse',
+    title: 'Độ tin cậy & vận hành',
+    text: 'Load test, observability, on-call, postmortem. Biết hệ thống gãy ở đâu trước khi khách hàng biết.',
+    posts: ['k6-load-test-rails-api', 'debug-he-thong-that-thoi-ai', 'postmortem-la-gi'],
+  },
+  {
+    icon: 'spark',
+    title: 'Làm phần mềm thời AI',
+    text: 'Dùng AI để đi nhanh mà không đánh đổi chất lượng: review, kiểm chứng, giữ hệ thống dễ hiểu và dễ sửa.',
+    posts: ['code-review-thoi-ai', 'ai-viet-code-dev-lam-gi', 'tu-duy-he-thong-thoi-ai'],
+  },
+].map((f) => ({ ...f, posts: f.posts.map(byId).filter((p) => p !== undefined) }));
+
+// Số liệu đo thật trong các bài viết (thí nghiệm trên máy local, không phải số liệu khách hàng).
+const proofs = [
+  {
+    id: 'golang-cache-stampede-flash-sale',
+    metric: '4.991 → 100',
+    unit: 'query vào database',
+    text: '5.000 request cùng lúc khi cache 100 sản phẩm hết hạn. Soft TTL, singleflight và lock giữ database chỉ còn một query mỗi sản phẩm.',
+  },
+  {
+    id: 'database-migration-khong-downtime',
+    metric: '5.009 ms',
+    unit: 'một SELECT bị treo',
+    text: 'Một câu ALTER TABLE chờ lock làm treo cả truy vấn theo khoá chính. lock_timeout và expand-contract để đổi schema khi hệ thống vẫn chạy.',
+  },
+  {
+    id: 'status-page-2-mvp-go',
+    metric: '0',
+    unit: 'báo động giả',
+    text: 'Một vùng mạng lỗi suốt buổi demo vẫn không mở incident. Incident engine có test, trang status sinh tĩnh, heartbeat giám sát chính bộ giám sát.',
+  },
+].map((p) => ({ ...p, post: byId(p.id) })).filter((p) => p.post);
+
+const serviceExtra: Record<string, { outcome: string; icon: string }> = {
+  mentoring: { outcome: 'Biết rõ mình cần học gì tiếp, code được review như ở team thật, tự tin hơn khi phỏng vấn.', icon: 'mentor' },
+  'it-support': { outcome: 'Máy và môi trường làm việc chạy lại, kèm các bước để lỗi không quay lại.', icon: 'wrench' },
+};
+const orderedServices = [...services].sort((a) => (a.slug === 'mentoring' ? -1 : 1));
 ---
-<Base>
-  <section class="hero">
-    <p class="eyebrow">Xin chào, mình là Quyền 👋</p>
-    <h1>Ghi chép thực chiến về <span class="hl">Golang</span>, <span class="hl">Ruby</span> và cách làm phần mềm tốt hơn.</h1>
-    <p class="lead">{SITE_DESCRIPTION}</p>
-    <div class="actions">
-      <a class="button" href={url('/posts/')}>Đọc bài viết</a>
-      <a class="button secondary" href={url('/services/')}>Mentoring 1-1</a>
+<Base wide>
+  <!-- ---------- Hero ---------- -->
+  <section class="lp-hero">
+    <div class="lp-hero-text">
+      <p class="lp-eyebrow"><span class="dot" aria-hidden="true"></span>Backend engineer · Go · Ruby · PostgreSQL</p>
+      <h1>Hệ thống backend <span class="grad">chạy đúng, chạy nhanh</span>, và không sập lúc 3 giờ sáng.</h1>
+      <p class="lp-lead">{SITE_DESCRIPTION} Mỗi bài viết đi kèm code chạy thật và số đo thật. Nếu bạn cần người đồng hành 1-1, mình có mentoring và hỗ trợ kỹ thuật trực tuyến.</p>
+      <div class="lp-actions">
+        <a class="button lg" href={url('/services/')}>Xem dịch vụ</a>
+        <a class="button secondary lg" href={url('/posts/')}>Đọc bài viết</a>
+      </div>
+      <ul class="lp-stack" aria-label="Công nghệ">
+        {['Go', 'Ruby on Rails', 'PostgreSQL', 'Redis', 'Docker', 'AWS', 'k6'].map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
+    <div class="lp-terminal" aria-label="Output thật từ bài cache stampede">
+      <div class="lp-term-bar"><i></i><i></i><i></i><span>flashsale — go run .</span></div>
+      <pre><code><span class="c"># 5.000 request, 100 sản phẩm hết hạn cache cùng lúc</span>
+<span class="p">$</span> go run .
+naive : <span class="bad">4991 query DB</span>, 194ms
+safe (cache trống)    :  <span class="ok">114 query DB</span>, 114ms
+safe (cùng lúc hết soft TTL):  <span class="ok">100 query DB</span>, 65ms
+warm all: <span class="ok">1 query DB</span> cho 100 sản phẩm
+stock: bán <span class="ok">100</span>, còn <span class="ok">0</span>
+<span class="p">$</span> <span class="cursor"></span></code></pre>
+      <a class="lp-term-link" href={url('/blog/golang-cache-stampede-flash-sale/')}>Đọc cách đo →</a>
     </div>
   </section>
 
-  {featured && (
-    <section>
-      <h2 class="section-title">Bài mới nhất</h2>
-      <a class="featured" href={url(`/blog/${featured.id}/`)}>
-        <Cover title={featured.data.title} tags={featured.data.tags} pubDate={featured.data.pubDate} cover={featured.data.cover} />
-        <div class="featured-body">
-        <time datetime={featured.data.pubDate.toISOString()}>{formatDate(featured.data.pubDate)}</time>
-        <h3>{featured.data.title}</h3>
-        <p>{featured.data.description}</p>
-        <span class="chips">{featured.data.tags.map((t) => <span>#{t}</span>)}</span>
-        <span class="more">Đọc tiếp →</span>
-        </div>
-      </a>
-    </section>
-  )}
+  <!-- ---------- Số liệu ---------- -->
+  <ul class="lp-stats">
+    <li><strong>{all.length}</strong><span>bài viết chuyên sâu</span></li>
+    <li><strong>{allSeries.length}</strong><span>series đọc theo lộ trình</span></li>
+    <li><strong>{topicCount}</strong><span>chủ đề kỹ thuật</span></li>
+    <li><strong>1-1</strong><span>mentoring &amp; hỗ trợ trực tuyến</span></li>
+  </ul>
 
+  <!-- ---------- Tập trung ---------- -->
+  <section class="lp-section">
+    <p class="lp-kicker">Tập trung vào</p>
+    <h2 class="lp-h2">Những thứ làm hệ thống đứng vững khi có người dùng thật</h2>
+    <div class="lp-focus">
+      {focus.map((f) => (
+        <article class="lp-card">
+          <span class={`lp-icon ${f.icon}`} aria-hidden="true"></span>
+          <h3>{f.title}</h3>
+          <p>{f.text}</p>
+          <ul>{f.posts.map((p) => <li><a href={url(`/blog/${p!.id}/`)}>{p!.data.title}</a></li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- ---------- Bằng chứng ---------- -->
+  <section class="lp-section">
+    <p class="lp-kicker">Viết ra, đo được</p>
+    <h2 class="lp-h2">Không chỉ nói lý thuyết: mỗi kết luận có thí nghiệm đi kèm</h2>
+    <div class="lp-proofs">
+      {proofs.map((p) => (
+        <a class="lp-proof" href={url(`/blog/${p.id}/`)}>
+          <span class="metric">{p.metric}</span>
+          <span class="unit">{p.unit}</span>
+          <p>{p.text}</p>
+          <span class="more">{p.post!.data.title} →</span>
+        </a>
+      ))}
+    </div>
+    <p class="lp-note">Số liệu từ thí nghiệm trong bài viết, chạy trên máy local.</p>
+  </section>
+
+  <!-- ---------- Dịch vụ ---------- -->
+  <section class="lp-section lp-services-wrap">
+    <p class="lp-kicker">Làm việc cùng mình</p>
+    <h2 class="lp-h2">Kinh nghiệm đó, áp vào đúng vấn đề của bạn</h2>
+    <div class="lp-services">
+      {orderedServices.map((s) => (
+        <article class="lp-service">
+          <span class={`lp-icon ${serviceExtra[s.slug]?.icon ?? 'spark'}`} aria-hidden="true"></span>
+          <h3>{s.title}</h3>
+          <p class="sum">{s.summary}</p>
+          {serviceExtra[s.slug] && <p class="outcome"><strong>Sau buổi:</strong> {serviceExtra[s.slug].outcome}</p>}
+          <ul>{s.scope.slice(0, 3).map((x) => <li>{x}</li>)}</ul>
+          <p class="meta">{s.duration} · {s.format.split('.')[0]}</p>
+          <a class="button" href={url(`/services/${s.slug}/`)}>Xem chi tiết</a>
+        </article>
+      ))}
+    </div>
+    <ol class="lp-steps">
+      <li><span>1</span><div><strong>Gửi vấn đề</strong><p>Mục tiêu của buổi, link repo hoặc CV nếu cần, để buổi tập trung đúng chỗ.</p></div></li>
+      <li><span>2</span><div><strong>Buổi 1-1 qua video</strong><p>Chia sẻ màn hình, cùng chẩn đoán và giải quyết trên chính vấn đề của bạn.</p></div></li>
+      <li><span>3</span><div><strong>Ghi chú và bước tiếp theo</strong><p>Tóm tắt những gì đã làm và hướng đi tiếp, để bạn tự làm tiếp được.</p></div></li>
+    </ol>
+  </section>
+
+  <!-- ---------- Series + bài mới ---------- -->
   {allSeries.length > 0 && (
-    <section>
-      <h2 class="section-title">Series</h2>
+    <section class="lp-section">
+      <p class="lp-kicker">Đọc theo lộ trình</p>
+      <h2 class="lp-h2">Series</h2>
       <div class="series-list compact">
         {allSeries.map((s) => (
           <a class="series-card" href={url(`/series/${s.slug}/`)}>
@@ -60,51 +170,34 @@ const maxCount = Math.max(1, ...tagStats.map((t) => t.n));
           </a>
         ))}
       </div>
-      <p class="see-all"><a href={url('/series/')}>Tất cả series →</a></p>
     </section>
   )}
 
-  <section>
-    <h2 class="section-title">Chủ đề</h2>
-    <ul class="tag-chart">
-      {tagStats.map(({ tag, label, n }) => (
-        <li>
-          <a href={url(`/tags/${tag}/`)} title={`${n} bài về ${label}`}>
-            <span class="tag-name">{label}</span>
-            <span class="tag-track"><span class="tag-bar" style={`width: ${(n / maxCount) * 100}%`} /></span>
-            <span class="tag-count">{n}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-    {allTags.length > TOP_TAGS && <p class="see-all"><a href={url('/tags/')}>Tất cả {allTags.length} tag →</a></p>}
-  </section>
-
-  {latest.length > 0 && (
-    <section>
-      <h2 class="section-title">Bài viết gần đây</h2>
-      <div class="grid">
-        {latest.map((p) => (
-          <a class="post-card" href={url(`/blog/${p.id}/`)}>
-            <Cover title={p.data.title} tags={p.data.tags} pubDate={p.data.pubDate} cover={p.data.cover} />
-            <div class="post-card-body">
+  <section class="lp-section">
+    <p class="lp-kicker">Mới nhất</p>
+    <h2 class="lp-h2">Bài viết gần đây</h2>
+    <div class="grid">
+      {latest.map((p) => (
+        <a class="post-card" href={url(`/blog/${p.id}/`)}>
+          <Cover title={p.data.title} tags={p.data.tags} pubDate={p.data.pubDate} cover={p.data.cover} />
+          <div class="post-card-body">
             <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
             <h3>{p.data.title}</h3>
             <p>{p.data.description}</p>
-            </div>
-          </a>
-        ))}
-      </div>
-      <p class="see-all"><a href={url('/posts/')}>Xem tất cả bài viết →</a></p>
-    </section>
-  )}
+          </div>
+        </a>
+      ))}
+    </div>
+    <p class="see-all"><a href={url('/posts/')}>Xem tất cả {all.length} bài viết →</a></p>
+  </section>
 
-  <section class="cta-box">
-    <h2>Cần người cùng gỡ rối?</h2>
-    <p>IT support và mentor cho junior dev, trao đổi 1-1 qua gọi video.</p>
-    <div class="actions">
-      <a class="button" href={url('/services/')}>Xem dịch vụ</a>
-      <a class="button secondary" href={url('/contact/')}>Liên hệ</a>
+  <!-- ---------- CTA cuối ---------- -->
+  <section class="lp-final">
+    <h2>Đang kẹt ở một vấn đề kỹ thuật, hay cần định hướng để tiến nhanh hơn?</h2>
+    <p>Một buổi 1-1 tập trung thường đáng giá hơn nhiều tuần tự mò mẫm.</p>
+    <div class="lp-actions">
+      <a class="button lg light" href={url('/services/')}>Chọn dịch vụ</a>
+      <a class="button lg ghost" href={url('/contact/')}>Liên hệ</a>
     </div>
   </section>
 </Base>

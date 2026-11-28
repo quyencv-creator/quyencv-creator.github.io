@@ -8,8 +8,10 @@ interface Props {
   /** Ảnh chia sẻ: đường dẫn trong site ("/og/abc.png") hoặc URL đầy đủ. */
   image?: string;
   type?: 'website' | 'article';
+  /** Trang rộng (landing page). */
+  wide?: boolean;
 }
-const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, type = 'website' } = Astro.props;
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, type = 'website', wide = false } = Astro.props;
 const path = Astro.url.pathname;
 const active = (prefix: string) => path.startsWith(url(prefix));
 const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, Astro.site).href;
@@ -49,7 +51,7 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
       </>
     )}
   </head>
-  <body>
+  <body class:list={{ wide }}>
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href={url('/')} aria-label={`${SITE_TITLE}, trang chủ`}>
