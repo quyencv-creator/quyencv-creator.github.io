@@ -9,7 +9,7 @@ export const LANGUAGE_TAGS = [
   { tag: 'ruby', label: 'Ruby' },
 ] as const;
 
-export const POSTS_PER_PAGE = 10;
+export const POSTS_PER_PAGE = 5;
 
 // Google Analytics 4: điền Measurement ID dạng "G-XXXXXXXXXX". Để trống thì không nhúng script.
 export const GA_MEASUREMENT_ID = 'G-73BKB046SZ';

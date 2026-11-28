@@ -96,7 +96,6 @@ const series = await getAllSeries();
   <section class={first ? 'mag-section mag-all' : 'mag-all'}>
     <div class="mag-section-head">
       <h2 class="mag-h2">{first ? 'Tất cả bài viết' : `Tất cả bài viết · trang ${page.currentPage}/${page.lastPage}`}</h2>
-      <a href={url('/search/')}>Tìm kiếm →</a>
     </div>
     <PostList posts={page.data} />
     <Pagination page={page} />

@@ -468,7 +468,7 @@ body.wide { background: var(--paper); }
 .mag-promo strong { font-size: 1.12rem; font-weight: 600; line-height: 1.35; }
 .mag-promo .more { margin-top: .4rem; font-size: .88rem; font-weight: 600; }
 .mag-promo:hover .more { color: var(--accent); }
-.mag-all .posts { max-width: 46rem; }
+
 @media (max-width: 880px) {
   .mag-lead, .mag-promos { grid-template-columns: 1fr; }
   .mag-lead-img { order: -1; }
