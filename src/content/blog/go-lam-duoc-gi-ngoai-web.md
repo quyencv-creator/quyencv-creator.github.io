@@ -2,7 +2,6 @@
 title: "Ngoài làm web, Go còn làm được gì?"
 description: "Go nổi tiếng với web API, nhưng phần lớn hạ tầng cloud hiện đại như Docker, Kubernetes, Terraform, Prometheus cũng viết bằng Go. Công cụ dòng lệnh, DevOps, mạng và proxy, database, xử lý dữ liệu, IoT, WebAssembly, desktop, game. Kèm một demo CLI chạy thật: một file chạy được cho Linux, Windows, macOS, không cần cài gì thêm. Và những chỗ Go không phải lựa chọn tốt."
 pubDate: 2026-11-28
-draft: true
 tags: [golang, backend, devops]
 ---
 
@@ -161,11 +160,5 @@ Nói về điểm mạnh mà không nói điểm yếu thì không công bằng:
 - **Giao diện người dùng phức tạp.** Web frontend, ứng dụng di động, desktop nhiều màn hình: các công nghệ chuyên dụng (React, Swift, Kotlin, Flutter) phù hợp hơn.
 - **Phần mềm cần kiểm soát bộ nhớ tuyệt đối.** Driver, kernel, phần mềm thời gian thực cứng, game engine 3D. Garbage collector của Go gây ra những khoảng dừng ngắn; với phần lớn ứng dụng thì không đáng kể, nhưng với những phần mềm này thì C, C++ hay Rust hợp hơn.
 - **Prototype cần thay đổi cực nhanh.** Script vài chục dòng chạy một lần thì Python hay shell nhanh hơn để viết. Go đáng giá khi công cụ cần được dùng lâu, chia sẻ cho người khác, hoặc chạy nhanh.
-
-## Kết
-
-Go được thiết kế cho phần mềm hệ thống và dịch vụ mạng ở quy mô lớn, và web API chỉ là một trường hợp của điều đó. Nếu bạn đã quen viết web bằng Go, bạn đã có sẵn gần hết những gì cần để làm công cụ dòng lệnh, DevOps tooling, job xử lý dữ liệu hay agent chạy trên server.
-
-Một gợi ý để bắt đầu: tìm một script nội bộ mà team đang dùng, dài và hay hỏng, rồi viết lại thành một CLI bằng Go. Đó là cách học nhanh nhất, và kết quả là một công cụ mà ai trong team cũng chạy được chỉ bằng cách tải một file.
 
 **Về code trong bài:** demo `logsum` đã chạy thật với Go 1.24 trên Linux x86-64, với file log giả lập 200.000 dòng. Thời gian và bộ nhớ đo trên một máy chạy thử, chỉ để tham khảo. Các bản Windows, macOS, Linux ARM được build và kiểm tra định dạng file, chưa chạy trên máy thật.
