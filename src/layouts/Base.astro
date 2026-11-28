@@ -68,6 +68,9 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
           <a href={url('/series/')} aria-current={active('/series/') ? 'page' : undefined}>Series</a>
           <a href={url('/services/')} aria-current={active('/services/') ? 'page' : undefined}>Dịch vụ</a>
           <a href={url('/about/')} aria-current={active('/about/') ? 'page' : undefined}>Giới thiệu</a>
+          <a class="rss" href={url('/search/')} title="Tìm kiếm (phím /)" aria-label="Tìm kiếm" aria-current={active('/search/') ? 'page' : undefined}>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 0 1 6.32 12.9l5.39 5.4-1.41 1.4-5.4-5.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+          </a>
           <a class="rss" href={url('/rss.xml')} title="RSS" aria-label="RSS">
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M5 3a16 16 0 0 1 16 16h-3A13 13 0 0 0 5 6V3zm0 6a10 10 0 0 1 10 10h-3a7 7 0 0 0-7-7V9zm2 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>
           </a>
@@ -76,6 +79,7 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
         <details class="mobile-menu">
           <summary aria-label="Mở menu"><span></span><span></span><span></span></summary>
           <div class="mobile-panel">
+            <a href={url('/search/')}>Tìm kiếm</a>
             <a href={url('/posts/')}>Bài viết</a>
             {LANGUAGE_TAGS.map(({ tag, label }) => <a class="sub" href={url(`/tags/${tag}/`)}>{label}</a>)}
             <a class="sub" href={url('/tags/')}>Tất cả chủ đề</a>
@@ -94,6 +98,13 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
         document.querySelectorAll('.site-header details[open]').forEach((d) => { if (!d.contains(e.target)) d.open = false; });
       });
       document.addEventListener('keydown', (e) => {
+        // Phím "/" mở trang tìm kiếm (trừ khi đang gõ trong ô nhập liệu).
+        const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? '') || document.activeElement?.isContentEditable;
+        if (e.key === '/' && !typing && !e.metaKey && !e.ctrlKey) {
+          e.preventDefault();
+          const box = document.getElementById('q');
+          if (box) box.focus(); else location.href = document.querySelector('.site-nav a[href$="/search/"]').href;
+        }
         if (e.key === 'Escape') document.querySelectorAll('.site-header details[open]').forEach((d) => (d.open = false));
       });
     </script>
