@@ -11,7 +11,7 @@ const THEMES: Record<string, Theme> = {
   ruby: { from: '#9b1c23', to: '#4a0b10', accent: '#ffb3b8', label: 'Ruby' },
   thinking: { from: '#6131c4', to: '#2c1166', accent: '#d6c4ff', label: 'Thinking' },
 };
-const DEFAULT_THEME: Theme = { from: '#334155', to: '#0f172a', accent: '#93c5fd', label: 'Blog' };
+const DEFAULT_THEME: Theme = { from: '#334155', to: '#0f172a', accent: '#fdba74', label: 'Blog' };
 
 export const coverTheme = (tags: string[]): Theme => {
   const tag = tags[0];
