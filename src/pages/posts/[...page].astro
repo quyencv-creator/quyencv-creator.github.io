@@ -3,34 +3,102 @@ import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getPosts, url } from '../../utils';
-import { POSTS_PER_PAGE, tagLabel } from '../../consts';
+import Cover from '../../components/Cover.astro';
+import PostCard from '../../components/mag/PostCard.astro';
+import Stamp from '../../components/mag/Stamp.astro';
+import { getPosts, formatDate, url } from '../../utils';
+import { getAllSeries } from '../../utils-series';
+import { POSTS_PER_PAGE, AUTHOR, tagLabel } from '../../consts';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getPosts();
-  const counts = new Map<string, number>();
-  posts.flatMap((p) => p.data.tags).forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1));
-  const topTags = [...counts].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([t]) => t);
-  return paginate(posts, { pageSize: POSTS_PER_PAGE, props: { total: posts.length, topTags } });
+  return paginate(posts, { pageSize: POSTS_PER_PAGE, props: { all: posts } });
 }) satisfies GetStaticPaths;
-const { page, total, topTags } = Astro.props;
+const { page, all } = Astro.props;
+const first = page.currentPage === 1;
+
+// Bài nổi bật: bài mới nhất. Ba thẻ tiếp theo: 3 bài mới kế tiếp.
+const [lead, ...rest] = all;
+const featured = rest.slice(0, 3);
+const shown = new Set([lead?.id, ...featured.map((p) => p.id)]);
+
+// Các khối theo chủ đề: lấy các tag nhiều bài nhất, mỗi khối 3 bài chưa xuất hiện ở trên.
+const counts = new Map<string, number>();
+all.flatMap((p) => p.data.tags).forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1));
+const sections: { tag: string; posts: typeof all }[] = [];
+for (const [tag] of [...counts].sort((a, b) => b[1] - a[1])) {
+  if (sections.length >= 4) break;
+  const ps = all.filter((p) => p.data.tags.includes(tag) && !shown.has(p.id)).slice(0, 3);
+  if (ps.length < 3) continue;
+  ps.forEach((p) => shown.add(p.id));
+  sections.push({ tag, posts: ps });
+}
+const series = await getAllSeries();
 ---
-<Base title={page.currentPage === 1 ? 'Bài viết' : `Bài viết · trang ${page.currentPage}`}>
-  <header class="list-head">
-    <p class="lp-kicker">Blog</p>
-    <h1>Bài viết</h1>
-    <p class="lead">{total} bài về backend, độ tin cậy hệ thống và nghề làm phần mềm. Code chạy thật, số đo thật.</p>
-    <form class="search-form compact" role="search" action={url('/search/')} method="get">
-      <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 0 1 6.32 12.9l5.39 5.4-1.41 1.4-5.4-5.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
-      <input id="q" name="q" type="search" placeholder="Tìm bài viết..." aria-label="Tìm bài viết" />
-      <kbd>/</kbd>
-    </form>
-    <nav class="topic-chips" aria-label="Chủ đề nổi bật">
-      {topTags.map((t) => <a href={url(`/tags/${t}/`)}>{tagLabel(t)}</a>)}
-      <a class="all" href={url('/tags/')}>Tất cả chủ đề →</a>
-    </nav>
-    {page.lastPage > 1 && <p class="page-info">Trang {page.currentPage}/{page.lastPage}</p>}
-  </header>
-  <PostList posts={page.data} />
-  <Pagination page={page} />
+<Base title={first ? 'Bài viết' : `Bài viết · trang ${page.currentPage}`} wide>
+  {first && lead && (
+    <>
+      <section class="mag-hero">
+        <div class="mag-hero-band" aria-hidden="true"></div>
+        <Stamp />
+        <article class="mag-lead">
+          <div class="mag-lead-text">
+            <p class="lp-kicker">Bài mới nhất</p>
+            <h1><a class="stretched" href={url(`/blog/${lead.id}/`)}>{lead.data.title}</a></h1>
+            <p class="mag-excerpt">{lead.data.description}</p>
+            <p class="mag-byline">
+              <span class="avatar" aria-hidden="true">{AUTHOR.initial}</span>
+              <span><strong>{AUTHOR.name}</strong><time datetime={lead.data.pubDate.toISOString()}>{formatDate(lead.data.pubDate)}</time></span>
+            </p>
+          </div>
+          <div class="mag-lead-img">
+            <Cover title={lead.data.title} tags={lead.data.tags} pubDate={lead.data.pubDate} cover={lead.data.cover} art />
+          </div>
+        </article>
+      </section>
+
+      <section class="mag-section">
+        <h2 class="mag-h2">Nổi bật</h2>
+        <div class="mag-grid">{featured.map((p) => <PostCard post={p} />)}</div>
+      </section>
+
+      <section class="mag-promos">
+        <a class="mag-promo" href={url('/series/')}>
+          <span class="mag-promo-icon plum" aria-hidden="true"><span class="lp-icon spark"></span></span>
+          <span class="mag-promo-body">
+            <span class="mag-promo-meta">Series · {series.length} loạt bài</span>
+            <strong>{series[0]?.title ?? 'Đọc theo lộ trình'}</strong>
+            <span class="more">Xem các series →</span>
+          </span>
+        </a>
+        <a class="mag-promo" href={url('/services/')}>
+          <span class="mag-promo-icon blue" aria-hidden="true"><span class="lp-icon mentor"></span></span>
+          <span class="mag-promo-body">
+            <span class="mag-promo-meta">Làm việc cùng mình</span>
+            <strong>Mentoring và hỗ trợ kỹ thuật 1-1</strong>
+            <span class="more">Tìm hiểu thêm →</span>
+          </span>
+        </a>
+      </section>
+
+      {sections.map((s) => (
+        <section class="mag-section">
+          <div class="mag-section-head">
+            <h2 class="mag-h2">{tagLabel(s.tag)}</h2>
+            <a href={url(`/tags/${s.tag}/`)}>Xem tất cả →</a>
+          </div>
+          <div class="mag-grid">{s.posts.map((p) => <PostCard post={p} />)}</div>
+        </section>
+      ))}
+    </>
+  )}
+
+  <section class={first ? 'mag-section mag-all' : 'mag-all'}>
+    <div class="mag-section-head">
+      <h2 class="mag-h2">{first ? 'Tất cả bài viết' : `Tất cả bài viết · trang ${page.currentPage}/${page.lastPage}`}</h2>
+      <a href={url('/search/')}>Tìm kiếm →</a>
+    </div>
+    <PostList posts={page.data} />
+    <Pagination page={page} />
+  </section>
 </Base>

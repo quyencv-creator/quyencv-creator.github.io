@@ -57,3 +57,6 @@ export const SERIES = [
     description: 'make, defer, channel và select; bẫy slice, map, interface nil và shadowing; con trỏ và những vấn đề của con trỏ. Mỗi mục có code chạy thật và output.',
   },
 ] as const;
+
+// Tác giả hiển thị trên thẻ bài viết và trang bài.
+export const AUTHOR = { name: 'Quyền', initial: 'Q' } as const;

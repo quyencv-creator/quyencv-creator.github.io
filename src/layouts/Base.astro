@@ -23,6 +23,9 @@ const imageUrl = image && new URL(image.startsWith('/') ? url(image) : image, As
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title === SITE_TITLE ? title : `${title} · ${SITE_TITLE}`}</title>
     <link rel="icon" type="image/svg+xml" href={url("/favicon.svg")} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" />
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={url('/rss.xml')} />

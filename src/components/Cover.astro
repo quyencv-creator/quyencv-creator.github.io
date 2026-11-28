@@ -2,6 +2,7 @@
 import { SITE_TITLE } from '../consts';
 import { COVER_W, COVER_H, coverTheme, wrapTitle, titleFontSize } from '../cover';
 import { formatDate, url } from '../utils';
+import { tagLabel } from '../consts';
 
 interface Props {
   title: string;
@@ -9,11 +10,14 @@ interface Props {
   pubDate: Date;
   cover?: string;
   class?: string;
+  /** Kiểu minh hoạ: không in tiêu đề (đã có ở thẻ), chỉ tên chủ đề và hoạ tiết; ảnh phủ kín khung. */
+  art?: boolean;
 }
-const { title, tags, pubDate, cover, class: className } = Astro.props;
+const { title, tags, pubDate, cover, class: className, art = false } = Astro.props;
 const src = cover && (cover.startsWith('/') ? url(cover) : cover);
 
 const theme = coverTheme(tags);
+const artLabel = tags[0] ? tagLabel(tags[0]) : theme.label;
 const lines = wrapTitle(title);
 const size = titleFontSize(lines.length);
 const lineH = size * 1.2;
@@ -22,6 +26,25 @@ const gid = `g-${Math.random().toString(36).slice(2, 8)}`;
 ---
 {src ? (
   <img class:list={['cover', className]} src={src} alt="" width={COVER_W} height={COVER_H} loading="lazy" decoding="async" />
+) : art ? (
+  <svg class:list={['cover', 'cover-art', className]} viewBox={`0 0 ${COVER_W} ${COVER_H}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label={artLabel} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color={theme.from} />
+        <stop offset="1" stop-color={theme.to} />
+      </linearGradient>
+    </defs>
+    <rect width={COVER_W} height={COVER_H} fill={`url(#${gid})`} />
+    <circle cx="1010" cy="120" r="250" fill="#fff" opacity=".07" />
+    <circle cx="180" cy="560" r="190" fill="#fff" opacity=".06" />
+    <circle cx="930" cy="470" r="70" fill={theme.accent} opacity=".35" />
+    <rect x="160" y="140" width="120" height="120" rx="24" fill="none" stroke={theme.accent} stroke-width="8" opacity=".45" transform="rotate(-12 220 200)" />
+    <path d="M760 150 l40 -70 l40 70 z" fill="#fff" opacity=".18" />
+    <g font-family="'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">
+      <text x={COVER_W / 2} y="350" font-size="96" font-weight="800" fill="#fff" letter-spacing="2">{artLabel.toUpperCase()}</text>
+      <rect x={COVER_W / 2 - 40} y="385" width="80" height="8" rx="4" fill={theme.accent} />
+    </g>
+  </svg>
 ) : (
   <svg class:list={['cover', className]} viewBox={`0 0 ${COVER_W} ${COVER_H}`} role="img" aria-label={title} xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -34,7 +57,7 @@ const gid = `g-${Math.random().toString(36).slice(2, 8)}`;
     <circle cx="1080" cy="90" r="220" fill="#fff" opacity=".06" />
     <circle cx="1150" cy="560" r="140" fill="#fff" opacity=".05" />
     <g font-family="'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" fill="#fff">
-      <text x="80" y="110" font-size="30" font-weight="700" fill={theme.accent} letter-spacing="2">{theme.label.toUpperCase()}</text>
+      <text x="80" y="110" font-size="30" font-weight="700" fill={theme.accent} letter-spacing="2">{artLabel.toUpperCase()}</text>
       <text x="80" y={titleY} font-size={size} font-weight="700">
         {lines.map((l, i) => <tspan x="80" dy={i === 0 ? 0 : lineH}>{l}</tspan>)}
       </text>

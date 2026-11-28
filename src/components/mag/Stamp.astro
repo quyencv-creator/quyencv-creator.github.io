@@ -1,0 +1,14 @@
+---
+// Con dấu tròn: chữ chạy vòng quanh logo. Dùng SVG textPath, không cần ảnh.
+const { text = 'BLOG CỦA QUYỀN • BACKEND • ĐỘ TIN CẬY • ' } = Astro.props;
+---
+<svg class="stamp" viewBox="0 0 200 200" role="img" aria-label="Blog của Quyền">
+  <defs><path id="stamp-circle" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0" /></defs>
+  <circle cx="100" cy="100" r="96" fill="var(--bg)" stroke="currentColor" stroke-width="3" stroke-dasharray="2 5" />
+  <circle cx="100" cy="100" r="88" fill="none" stroke="currentColor" stroke-width="2" />
+  <text font-size="15" font-weight="700" letter-spacing="2.4" fill="currentColor">
+    <textPath href="#stamp-circle">{text}</textPath>
+  </text>
+  <circle cx="100" cy="100" r="50" fill="var(--accent-bg)" />
+  <text x="100" y="118" text-anchor="middle" font-size="52" font-weight="700" fill="#fff" font-family="Newsreader, Georgia, serif">Q</text>
+</svg>

@@ -1,0 +1,20 @@
+---
+import Cover from '../Cover.astro';
+import { formatDate, url } from '../../utils';
+import { AUTHOR } from '../../consts';
+const { post } = Astro.props;
+const href = url(`/blog/${post.id}/`);
+---
+<article class="mag-card">
+  <a class="mag-card-img" href={href} tabindex="-1" aria-hidden="true">
+    <Cover title={post.data.title} tags={post.data.tags} pubDate={post.data.pubDate} cover={post.data.cover} art />
+  </a>
+  <div class="mag-card-body">
+    <h3><a class="stretched" href={href}>{post.data.title}</a></h3>
+    <p class="mag-excerpt">{post.data.description}</p>
+    <p class="mag-byline">
+      <span class="avatar" aria-hidden="true">{AUTHOR.initial}</span>
+      <span><strong>{AUTHOR.name}</strong><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time></span>
+    </p>
+  </div>
+</article>
