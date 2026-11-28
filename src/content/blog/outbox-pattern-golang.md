@@ -2,7 +2,7 @@
 title: Transactional Outbox Pattern với Golang
 description: Cách ghi dữ liệu và publish event một cách nhất quán, không mất message, bằng outbox pattern trong Go + PostgreSQL.
 pubDate: 2026-01-05
-tags: [golang, microservices, outbox-pattern]
+tags: [golang, architecture]
 ---
 
 ## Vấn đề: dual write

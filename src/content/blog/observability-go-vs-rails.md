@@ -2,7 +2,7 @@
 title: "Vì sao Go app hay nói về Prometheus, Grafana, OpenTelemetry còn Rails app thì ít?"
 description: Go cần tự lắp observability và lắp rất dễ, Rails thì mua APM trọn gói nên ít ai phải nói tới. Bài viết giải thích lý do kỹ thuật lẫn văn hoá, trả lời câu hỏi dự án bình thường không phải microservice có cần stack này không, và các công cụ có sẵn thay thế ở cả Go lẫn Rails.
 pubDate: 2026-08-10
-tags: [golang, rails, observability, devops, backend]
+tags: [golang, ruby, devops, backend]
 ---
 
 Đọc blog kỹ thuật của team Go, bạn sẽ gặp Prometheus, Grafana, OpenTelemetry ở khắp nơi: dashboard, histogram, trace xuyên 12 service. Đọc blog của team Rails, chủ đề này hiếm hơn hẳn.

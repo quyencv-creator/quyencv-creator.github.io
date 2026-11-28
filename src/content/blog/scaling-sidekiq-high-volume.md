@@ -2,7 +2,7 @@
 title: "Scaling Sidekiq cho ứng dụng high-volume: deploy nhiều Docker instance và đo xem nghẽn ở đâu"
 description: "Thiết kế queue, concurrency, connection pool, deploy Sidekiq bằng Docker Compose/Kubernetes để scale ngang, và đo latency, throughput, saturation để biết đang nghẽn ở Redis, DB hay CPU."
 pubDate: 2026-05-23
-tags: [ruby, rails, sidekiq, docker, redis]
+tags: [ruby, backend, devops, database]
 ---
 
 Sidekiq chạy ngon với vài nghìn job một ngày. Khi lên vài triệu job một ngày, các câu hỏi đổi khác: tăng `concurrency` hay thêm container? Vì sao thêm container mà queue vẫn dồn? Job email chạy chậm có phải do Sidekiq không, hay do DB?

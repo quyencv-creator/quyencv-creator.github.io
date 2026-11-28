@@ -2,7 +2,7 @@
 title: "Bảng xếp hạng contest với Redis và Lua script trong Golang"
 description: Dựng bảng xếp hạng kiểu ICPC (điểm + penalty) bằng Redis Sorted Set, dùng Lua script để cập nhật nguyên tử, pipeline để đọc nhanh, kèm code go-redis chạy được và những cái bẫy khi đưa lên production.
 pubDate: 2026-03-26
-tags: [golang, redis, backend]
+tags: [golang, database, backend]
 ---
 
 Một contest lập trình có vài nghìn thí sinh, nộp bài liên tục, và ai cũng F5 bảng xếp hạng mỗi vài giây. Bài này dựng bảng xếp hạng đó bằng **Redis** và **Lua script**, viết bằng Go với thư viện [go-redis](https://github.com/redis/go-redis), để thấy rõ:

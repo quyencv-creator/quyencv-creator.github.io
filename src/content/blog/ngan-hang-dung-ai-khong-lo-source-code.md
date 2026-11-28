@@ -2,7 +2,7 @@
 title: "Ngân hàng muốn tăng tốc bằng AI: làm sao để nhân viên không bê cả source code cho AI bên ngoài?"
 description: "Cấm AI thì nhân viên dùng lén bằng tài khoản cá nhân, thả cửa thì source code và dữ liệu khách hàng ra ngoài. Cách các tổ chức tài chính có thể vừa dùng AI vừa kiểm soát được: cung cấp con đường chính thức tốt hơn con đường lén, phân loại dữ liệu, cổng AI tập trung, kiểm soát agent, và đặt luật rõ ràng cho con người."
 pubDate: 2026-11-13
-tags: [ai, security, devops]
+tags: [ai, devops]
 ---
 
 Một dev ở ngân hàng đang gặp bug khó trong module tính lãi. Công cụ nội bộ không giúp được. Anh mở điện thoại, đăng nhập một chatbot AI bằng tài khoản cá nhân, dán vào đó 300 dòng code, kèm luôn đoạn log có số tài khoản khách hàng để "cho AI hiểu ngữ cảnh". Năm phút sau bug được sửa. Không ai biết chuyện này đã xảy ra.

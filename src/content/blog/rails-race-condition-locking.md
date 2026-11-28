@@ -2,7 +2,7 @@
 title: Race condition trong Rails — Pessimistic Lock vs Optimistic Lock
 description: Race condition xảy ra thế nào trong Rails, cách dùng pessimistic lock và optimistic lock, ưu nhược điểm, khi nào nên chọn cái nào và các bài toán thực tế hay gặp.
 pubDate: 2026-02-10
-tags: [rails, ruby, database, concurrency]
+tags: [ruby, database, backend]
 ---
 
 ## Race condition là gì

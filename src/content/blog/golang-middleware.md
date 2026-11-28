@@ -2,7 +2,7 @@
 title: "Middleware trong Go: cách viết, cách chạy và 3 ví dụ thực tế"
 description: Middleware trong Go là gì, chạy theo thứ tự nào, nên làm gì ở tầng middleware, kèm ví dụ logging, authentication và phân quyền theo role.
 pubDate: 2026-01-19
-tags: [golang, backend, middleware]
+tags: [golang, backend]
 ---
 
 Trong [bài trước](/blog/go-web-service-tu-a-den-z/) có nhắc tới middleware nằm giữa `http.Server` và handler. Bài này đi sâu vào phần đó: middleware là gì, viết thế nào, chạy theo thứ tự ra sao, và người ta thường đặt gì vào đây.

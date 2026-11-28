@@ -2,7 +2,7 @@
 title: "Cache invalidation và cache expire: thiết kế cache cho flash sale khi giá thay đổi"
 description: "Phân biệt expire và invalidate qua bài toán flash sale: chỗ nào đọc nhiều nhất, đặt cache ở tầng nào, invalidate giá ra sao cho đúng và không sập DB. Code Go."
 pubDate: 2026-05-08
-tags: [golang, cache, redis, backend]
+tags: [golang, backend, database]
 ---
 
 > "There are only two hard things in Computer Science: cache invalidation and naming things." — Phil Karlton
