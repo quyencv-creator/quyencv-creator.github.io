@@ -172,7 +172,7 @@ Tách biệt nghĩa là, ít nhất:
 
 ## Tiếp theo
 
-Phần này trả lời câu hỏi "vì sao". Ở **phần 2**, mình sẽ bắt tay vào thiết kế một dịch vụ status page tự dựng: mô hình dữ liệu cho component, incident, cập nhật và lịch bảo trì, cách tách phần quản trị khỏi trang công khai, và cách giữ cho trang vẫn sống khi hệ thống chính sập.
+Phần này trả lời câu hỏi "vì sao". Ở **[phần 2](/blog/status-page-2-mvp-go/)**, mình sẽ bắt tay vào thiết kế một dịch vụ status page tự dựng: mô hình dữ liệu cho component, incident, cập nhật và lịch bảo trì, cách tách phần quản trị khỏi trang công khai, và cách giữ cho trang vẫn sống khi hệ thống chính sập.
 
 ## Nguồn
 

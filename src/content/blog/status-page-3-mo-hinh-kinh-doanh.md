@@ -6,7 +6,7 @@ draft: true
 tags: [thinking, career, devops]
 ---
 
-Sau [phần 1](/blog/status-page-1-vi-sao-can/) (vì sao cần trang status) và phần 2 (tự dựng dịch vụ), bạn có trong tay một công cụ chạy được: giám sát vài endpoint, có trang status, có cập nhật sự cố, có thông báo cho người đăng ký. Câu hỏi tự nhiên tiếp theo: có bán được không?
+Sau [phần 1](/blog/status-page-1-vi-sao-can/) (vì sao cần trang status) và [phần 2](/blog/status-page-2-mvp-go/) (tự dựng dịch vụ), bạn có trong tay một công cụ chạy được: giám sát vài endpoint, có trang status, có cập nhật sự cố, có thông báo cho người đăng ký. Câu hỏi tự nhiên tiếp theo: có bán được không?
 
 Bài này trả lời thẳng câu hỏi đó. Không phải để khuyên bạn bỏ việc khởi nghiệp, mà để nhìn rõ thị trường, những chỗ có thể có cơ hội, và những rủi ro mà người làm kỹ thuật hay đánh giá thấp.
 
